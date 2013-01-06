@@ -62,7 +62,7 @@ public class ShaderExample {
 	private Vector3f modelAngle = null;
 	private Vector3f modelScale = null;
 	private Vector3f cameraPos = null;
-	private float cameraZ = -3;
+	private float cameraZ = -5.0f;
 	private FloatBuffer matrix44Buffer = null;
 	
 	public ShaderExample() {
@@ -128,58 +128,58 @@ public class ShaderExample {
 	private void setupQuad() {
 		// Front
 		VertexData v0 = new VertexData();
-		v0.setXYZ(-0.1f, 0.1f, 0.1f); v0.setRGB(1, 0, 0); v0.setST((float)9/16, (float)1/16);
+		v0.setXYZ(-1.0f, 1.0f, 1.0f); v0.setRGB(1, 0, 0); v0.setST((float)9/16, (float)1/16);
 		VertexData v1 = new VertexData();
-		v1.setXYZ(0.1f, 0.1f, 0.1f); v1.setRGB(0, 1, 0); v1.setST((float)10/16, (float)1/16);
+		v1.setXYZ(1.0f, 1.0f, 1.0f); v1.setRGB(0, 1, 0); v1.setST((float)10/16, (float)1/16);
 		VertexData v2 = new VertexData();
-		v2.setXYZ(0.1f, -0.1f, 0.1f); v2.setRGB(0, 0, 1); v2.setST((float)10/16, (float)2/16);
+		v2.setXYZ(1.0f, -1.0f, 1.0f); v2.setRGB(0, 0, 1); v2.setST((float)10/16, (float)2/16);
 		VertexData v3 = new VertexData();
-		v3.setXYZ(-0.1f, -0.1f, 0.1f); v3.setRGB(1, 1, 1); v3.setST((float)9/16, (float)2/16);
+		v3.setXYZ(-1.0f, -1.0f, 1.0f); v3.setRGB(1, 1, 1); v3.setST((float)9/16, (float)2/16);
 		// Top
 		VertexData v4 = new VertexData();
-		v4.setXYZ(-0.1f, 0.1f, -0.1f); v4.setRGB(1, 1, 1); v4.setST((float)9/16, (float)1/16);
+		v4.setXYZ(-1.0f, 1.0f, -1.0f); v4.setRGB(1, 1, 1); v4.setST((float)9/16, (float)1/16);
 		VertexData v5 = new VertexData();
-		v5.setXYZ(0.1f, 0.1f, -0.1f); v5.setRGB(0, 1, 0); v5.setST((float)10/16, (float)1/16);
+		v5.setXYZ(1.0f, 1.0f, -1.0f); v5.setRGB(0, 1, 0); v5.setST((float)10/16, (float)1/16);
 		VertexData v6 = new VertexData();
-		v6.setXYZ(0.1f, 0.1f, 0.1f); v6.setRGB(0, 0, 1); v6.setST((float)10/16, (float)2/16);
+		v6.setXYZ(1.0f, 1.0f, 1.0f); v6.setRGB(0, 0, 1); v6.setST((float)10/16, (float)2/16);
 		VertexData v7 = new VertexData();
-		v7.setXYZ(-0.1f, 0.1f, 0.1f); v7.setRGB(1, 1, 1); v7.setST((float)9/16, (float)2/16);
+		v7.setXYZ(-1.0f, 1.0f, 1.0f); v7.setRGB(1, 1, 1); v7.setST((float)9/16, (float)2/16);
 		// Bottom
 		VertexData v8 = new VertexData();
-		v8.setXYZ(-0.1f, -0.1f, -0.1f); v8.setRGB(1, 1, 1); v8.setST((float)9/16, (float)1/16);
+		v8.setXYZ(-1.0f, -1.0f, -1.0f); v8.setRGB(1, 1, 1); v8.setST((float)9/16, (float)1/16);
 		VertexData v9 = new VertexData();
-		v9.setXYZ(0.1f, -0.1f, -0.1f); v9.setRGB(0, 1, 0); v9.setST((float)10/16, (float)1/16);
+		v9.setXYZ(1.0f, -1.0f, -1.0f); v9.setRGB(0, 1, 0); v9.setST((float)10/16, (float)1/16);
 		VertexData v10 = new VertexData();
-		v10.setXYZ(0.1f, -0.1f, 0.1f); v10.setRGB(0, 0, 1); v10.setST((float)10/16, (float)2/16);
+		v10.setXYZ(1.0f, -1.0f, 1.0f); v10.setRGB(0, 0, 1); v10.setST((float)10/16, (float)2/16);
 		VertexData v11 = new VertexData();
-		v11.setXYZ(-0.1f, -0.1f, 0.1f); v11.setRGB(1, 1, 1); v11.setST((float)9/16, (float)2/16);
+		v11.setXYZ(-1.0f, -1.0f, 1.0f); v11.setRGB(1, 1, 1); v11.setST((float)9/16, (float)2/16);
 		// Back
 		VertexData v12 = new VertexData();
-		v12.setXYZ(-0.1f, 0.1f, -0.1f); v12.setRGB(1, 1, 1); v12.setST((float)9/16, (float)1/16);
+		v12.setXYZ(-1.0f, 1.0f, -1.0f); v12.setRGB(1, 1, 1); v12.setST((float)9/16, (float)1/16);
 		VertexData v13 = new VertexData();
-		v13.setXYZ(0.1f, 0.1f, -0.1f); v13.setRGB(0, 1, 0); v13.setST((float)10/16, (float)1/16);
+		v13.setXYZ(1.0f, 1.0f, -1.0f); v13.setRGB(0, 1, 0); v13.setST((float)10/16, (float)1/16);
 		VertexData v14 = new VertexData();
-		v14.setXYZ(0.1f, -0.1f, -0.1f); v14.setRGB(0, 0, 1); v14.setST((float)10/16, (float)2/16);
+		v14.setXYZ(1.0f, -1.0f, -1.0f); v14.setRGB(0, 0, 1); v14.setST((float)10/16, (float)2/16);
 		VertexData v15 = new VertexData();
-		v15.setXYZ(-0.1f, -0.1f, -0.1f); v15.setRGB(1, 1, 1); v15.setST((float)9/16, (float)2/16);
+		v15.setXYZ(-1.0f, -1.0f, -1.0f); v15.setRGB(1, 1, 1); v15.setST((float)9/16, (float)2/16);
 		// Left
 		VertexData v16 = new VertexData();
-		v16.setXYZ(-0.1f, 0.1f, -0.1f); v16.setRGB(1, 1, 1); v16.setST((float)7/16, (float)7/16);
+		v16.setXYZ(-1.0f, 1.0f, -1.0f); v16.setRGB(1, 1, 1); v16.setST((float)7/16, (float)7/16);
 		VertexData v17 = new VertexData();
-		v17.setXYZ(-0.1f, 0.1f, 0.1f); v17.setRGB(0, 1, 0); v17.setST((float)8/16, (float)7/16);
+		v17.setXYZ(-1.0f, 1.0f, 1.0f); v17.setRGB(0, 1, 0); v17.setST((float)8/16, (float)7/16);
 		VertexData v18 = new VertexData();
-		v18.setXYZ(-0.1f, -0.1f, 0.1f); v18.setRGB(0, 0, 1); v18.setST((float)8/16, (float)8/16);
+		v18.setXYZ(-1.0f, -1.0f, 1.0f); v18.setRGB(0, 0, 1); v18.setST((float)8/16, (float)8/16);
 		VertexData v19 = new VertexData();
-		v19.setXYZ(-0.1f, -0.1f, -0.1f); v19.setRGB(1, 1, 1); v19.setST((float)7/16, (float)8/16);
+		v19.setXYZ(-1.0f, -1.0f, -1.0f); v19.setRGB(1, 1, 1); v19.setST((float)7/16, (float)8/16);
 		// Right
 		VertexData v20 = new VertexData();
-		v20.setXYZ(0.1f, 0.1f, -0.1f); v20.setRGB(1, 1, 1); v20.setST((float)7/16, (float)7/16);
+		v20.setXYZ(1.0f, 1.0f, -1.0f); v20.setRGB(1, 1, 1); v20.setST((float)7/16, (float)7/16);
 		VertexData v21 = new VertexData();
-		v21.setXYZ(0.1f, 0.1f, 0.1f); v21.setRGB(0, 1, 0); v21.setST((float)8/16, (float)7/16);
+		v21.setXYZ(1.0f, 1.0f, 1.0f); v21.setRGB(0, 1, 0); v21.setST((float)8/16, (float)7/16);
 		VertexData v22 = new VertexData();
-		v22.setXYZ(0.1f, -0.1f, 0.1f); v22.setRGB(0, 0, 1); v22.setST((float)8/16, (float)8/16);
+		v22.setXYZ(1.0f, -1.0f, 1.0f); v22.setRGB(0, 0, 1); v22.setST((float)8/16, (float)8/16);
 		VertexData v23 = new VertexData();
-		v23.setXYZ(0.1f, -0.1f, -0.1f); v23.setRGB(1, 1, 1); v23.setST((float)7/16, (float)8/16);
+		v23.setXYZ(1.0f, -1.0f, -1.0f); v23.setRGB(1, 1, 1); v23.setST((float)7/16, (float)8/16);
 		
 		vertices = new VertexData[] {
 				v0,  v1,  v2,  v3,
@@ -305,7 +305,7 @@ public class ShaderExample {
 		updateFPS();
 		float rotationDelta = 1f;
 		float scaleDelta = 0.005f;
-		float posDelta = 0.001f;
+		float posDelta = 0.015f;
 		Vector3f scaleAdd = new Vector3f(scaleDelta, scaleDelta, scaleDelta);
 		Vector3f scaleMinus = new Vector3f(-scaleDelta, -scaleDelta, -scaleDelta);
 		
@@ -348,14 +348,15 @@ public class ShaderExample {
 		
 		int dWheel = Mouse.getDWheel();
 		if (dWheel > 0) {
-			cameraZ -= 0.1f;
+			cameraZ += 0.5f;
 		}
 		else if (dWheel < 0) {
-			cameraZ += 0.1f;
+			cameraZ -= 0.5f;
 		}
-		if (cameraZ >= 0.1f) {
-			cameraZ = 0.1f;
+		if (cameraZ >= 1.0f) {
+			cameraZ = 1.0f;
 		}
+		
 		cameraPos = new Vector3f(0, 0, cameraZ);
 		viewMatrix = new Matrix4f();
 		modelMatrix = new Matrix4f();
