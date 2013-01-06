@@ -237,9 +237,7 @@ public class ShaderExample {
 		glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indicesBuffer, GL_STATIC_DRAW_ARB);
 		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 		
-		modelPos = new Vector3f(0, 0, 0);
-		modelAngle = new Vector3f(0, 0, 0);
-		modelScale = new Vector3f(1, 1, 1);
+		this.resetModel();
 	}
 	
 	private void setupShaders() {    	
@@ -357,6 +355,11 @@ public class ShaderExample {
 			cameraZ = 1.0f;
 		}
 		
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+			this.resetModel();
+			cameraZ = -5.0f;
+		}
+		
 		cameraPos = new Vector3f(0, 0, cameraZ);
 		viewMatrix = new Matrix4f();
 		modelMatrix = new Matrix4f();
@@ -382,7 +385,6 @@ public class ShaderExample {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		shaderProgram.activate();
 		texture.bind();
-		glUniform1i(shaderProgram.getUniformLocation("texKitten"), 0);
 		
 		glBindVertexArray(vao);
 		glEnableVertexAttribArray(posAttrib);
@@ -399,6 +401,12 @@ public class ShaderExample {
 		glBindVertexArray(0);
 		shaderProgram.deactivate();
 	}
+	
+	private void resetModel() {
+		modelPos = new Vector3f(0, 0, 0);
+		modelAngle = new Vector3f(0, 0, 0);
+		modelScale = new Vector3f(1, 1, 1);
+	};
 	
 	public int getDelta() {
 	    long time = getTime();
