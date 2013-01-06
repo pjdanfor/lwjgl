@@ -301,9 +301,9 @@ public class ShaderExample {
 	
 	private void logicCycle(int delta) {
 		updateFPS();
-		float rotationDelta = 1f;
+		float rotationDelta = 0.35f;
 		float scaleDelta = 0.005f;
-		float posDelta = 0.015f;
+		float posDelta = 0.01f;
 		Vector3f scaleAdd = new Vector3f(scaleDelta, scaleDelta, scaleDelta);
 		Vector3f scaleMinus = new Vector3f(-scaleDelta, -scaleDelta, -scaleDelta);
 		
