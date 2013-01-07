@@ -3,6 +3,7 @@ package com.deeter;
 import static org.lwjgl.opengl.ARBBufferObject.*;
 import static org.lwjgl.opengl.ARBVertexBufferObject.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -85,9 +86,9 @@ public class ShaderExample {
 	private void setupOpenGL() {
 		try {
 			PixelFormat pixelFormat = new PixelFormat();
-			ContextAttribs contextAtrributes = new ContextAttribs(3, 2);
-			contextAtrributes.withForwardCompatible(true);
-			contextAtrributes.withProfileCore(true);
+			ContextAttribs contextAtrributes = new ContextAttribs(3, 2)
+				.withForwardCompatible(true)
+				.withProfileCore(true);
 
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
 			Display.setTitle(WINDOW_TITLE);
@@ -218,9 +219,9 @@ public class ShaderExample {
 		
 		vao = glGenVertexArrays();
 		glBindVertexArray(vao);
-		vbo = glGenBuffersARB();
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, vbo);
-		glBufferDataARB(GL_ARRAY_BUFFER_ARB, verticesFloatBuffer, GL_STREAM_DRAW_ARB);
+		vbo = glGenBuffers();
+		glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo);
+		glBufferData(GL_ARRAY_BUFFER_ARB, verticesFloatBuffer, GL_STREAM_DRAW_ARB);
 		
 		posAttrib = shaderProgram.getAttributeLocation("in_Position");
 		glVertexAttribPointer(posAttrib, VertexData.positionElementCount, GL_FLOAT, false, VertexData.stride, VertexData.positionByteOffset);
@@ -229,13 +230,13 @@ public class ShaderExample {
 		texAttrib = shaderProgram.getAttributeLocation("in_TextureCoord");
 		glVertexAttribPointer(texAttrib, VertexData.textureElementCount, GL_FLOAT, false, VertexData.stride, VertexData.textureByteOffset);
 		
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+		glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
 		glBindVertexArray(0);
 		
-		ibo = glGenBuffersARB();
-		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, ibo);
-		glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, indicesBuffer, GL_STATIC_DRAW_ARB);
-		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+		ibo = glGenBuffers();
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, ibo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER_ARB, indicesBuffer, GL_STATIC_DRAW_ARB);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 		
 		this.resetModel();
 	}
@@ -288,8 +289,8 @@ public class ShaderExample {
 	private void destroyOpenGL() {
 		texture.release();
 		shaderProgram.tearDown();
-		glDeleteBuffersARB(vbo);
-		glDeleteBuffersARB(ibo);
+		glDeleteBuffers(vbo);
+		glDeleteBuffers(ibo);
 		ARBVertexArrayObject.glDeleteVertexArrays(vao);
 		Display.destroy();
 	}
@@ -391,10 +392,10 @@ public class ShaderExample {
 		glEnableVertexAttribArray(colorAttrib);
 		glEnableVertexAttribArray(texAttrib);
 		
-		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, ibo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, ibo);
 		glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_BYTE, 0);
 		
-		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 		glDisableVertexAttribArray(posAttrib);
 		glDisableVertexAttribArray(colorAttrib);
 		glDisableVertexAttribArray(texAttrib);
