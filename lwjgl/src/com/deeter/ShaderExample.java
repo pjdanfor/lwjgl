@@ -7,6 +7,8 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -29,6 +31,9 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
+import com.deeter.model.Face;
+import com.deeter.model.Model;
+import com.deeter.model.OBJLoader;
 import com.deeter.shader.Shader;
 import com.deeter.shader.ShaderProgram;
 import com.deeter.utils.MatrixUtils;
@@ -66,9 +71,15 @@ public class ShaderExample {
 	private float cameraZ = -5.0f;
 	private FloatBuffer matrix44Buffer = null;
 	
+	private static int vboVertexHandle = 0;
+	private static int vboNormalHandle = 0;
+	
+	private static Model m;
+	
 	public ShaderExample() {
 		this.setupOpenGL();
 		this.setupShaders();
+//		this.setupVBOs();
 		this.setupQuad();
 		this.setupTextures();
 		this.setupMatrices();
@@ -112,7 +123,7 @@ public class ShaderExample {
 	}
 	
 	private void setupMatrices() {
-		projectionMatrix = MatrixUtils.createProjectionMatrix(60f, WIDTH, HEIGHT, 0.1f, 100.0f);
+		projectionMatrix = MatrixUtils.createProjectionMatrix(90f, WIDTH, HEIGHT, 0.1f, 100.0f);
 		viewMatrix = new Matrix4f();
 		modelMatrix = new Matrix4f();
 		matrix44Buffer = BufferUtils.createFloatBuffer(16);
@@ -124,6 +135,45 @@ public class ShaderExample {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void setupVBOs() {
+		vboVertexHandle = glGenBuffers();
+		vboNormalHandle = glGenBuffers();
+		
+		m = null;
+		try {
+			m = OBJLoader.loadModel(new File("res/cube.obj"));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		
+		FloatBuffer vertices = reserveData(m.vertices.size() * 36);
+		FloatBuffer normals = reserveData(m.normals.size() * 36);
+		
+		for (Face face : m.faces) {
+			vertices.put(asFloats(m.vertices.get((int) (face.vertex.x - 1))));
+			vertices.put(asFloats(m.vertices.get((int) (face.vertex.y - 1))));
+			vertices.put(asFloats(m.vertices.get((int) (face.vertex.z - 1))));
+			normals.put(asFloats(m.normals.get((int) (face.normal.x - 1))));
+			normals.put(asFloats(m.normals.get((int) (face.normal.y - 1))));
+			normals.put(asFloats(m.normals.get((int) (face.normal.z - 1))));
+		}
+		
+		vertices.flip();
+		normals.flip();
+		
+		glBindBuffer(GL_ARRAY_BUFFER, vboVertexHandle);
+		glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, vboNormalHandle);
+		glBufferData(GL_ARRAY_BUFFER, normals, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		
+		this.resetModel();
 	}
 	
 	private void setupQuad() {
@@ -230,13 +280,13 @@ public class ShaderExample {
 		texAttrib = shaderProgram.getAttributeLocation("in_TextureCoord");
 		glVertexAttribPointer(texAttrib, VertexData.textureElementCount, GL_FLOAT, false, VertexData.stride, VertexData.textureByteOffset);
 		
-		glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
-		glBindVertexArray(0);
-		
 		ibo = glGenBuffers();
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, ibo);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER_ARB, indicesBuffer, GL_STATIC_DRAW_ARB);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+		
+		glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
+		glBindVertexArray(0);
 		
 		this.resetModel();
 	}
@@ -298,6 +348,7 @@ public class ShaderExample {
 	private void loopCycle(int delta) {
 		this.logicCycle(delta);
 		this.renderCycle();
+//		this.testRender();
 	}
 	
 	private void logicCycle(int delta) {
@@ -384,6 +435,7 @@ public class ShaderExample {
 	
 	private void renderCycle() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		shaderProgram.activate();
 		texture.bind();
 		
@@ -400,6 +452,22 @@ public class ShaderExample {
 		glDisableVertexAttribArray(colorAttrib);
 		glDisableVertexAttribArray(texAttrib);
 		glBindVertexArray(0);
+		shaderProgram.deactivate();
+	}
+	
+	private void testRender() {
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		shaderProgram.activate();
+		glBindVertexArray(vao);
+		glEnableVertexAttribArray(posAttrib);
+		
+		glBindBuffer(GL_ARRAY_BUFFER, vboVertexHandle);
+		glDrawArrays(GL_TRIANGLES, 0, m.faces.size() * 3);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+//		glVertexPointer(3, GL_FLOAT, 0, 0L);
+//		glBindBuffer(GL_ARRAY_BUFFER, vboNormalHandle);
+//		glNormalPointer(GL_FLOAT, 0, 0L);
+//		glMaterialf(GL_FRONT, GL_SHININESS, 10f);
 		shaderProgram.deactivate();
 	}
 	
@@ -428,6 +496,15 @@ public class ShaderExample {
 			lastFPS += 1000;
 		}
 		fps++;
+	}
+	
+	private static float[] asFloats(Vector3f v) {
+		return new float[] { v.x, v.y, v.z };
+	}
+	
+	private static FloatBuffer reserveData(int size) {
+		FloatBuffer data = BufferUtils.createFloatBuffer(size);
+		return data;
 	}
 	
 	public static void main(String[] argv) {

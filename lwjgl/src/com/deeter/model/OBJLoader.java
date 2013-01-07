@@ -16,20 +16,21 @@ public class OBJLoader {
 		Model m = new Model();
 		String line;
 		String[] choppedLine;
+		float x = 0.0f, y = 0.0f, z = 0.0f;
 		
 		while ((line = reader.readLine()) != null) {
 			if (line.startsWith("v ")) {
 				choppedLine = line.split(" ");
-				float x = Float.valueOf(choppedLine[1]);
-				float y = Float.valueOf(choppedLine[2]);
-				float z = Float.valueOf(choppedLine[3]);
+				x = Float.valueOf(choppedLine[1]);
+				y = Float.valueOf(choppedLine[2]);
+				z = Float.valueOf(choppedLine[3]);
 				m.addVertex(new Vector3f(x, y, z));
 			}
 			else if (line.startsWith("vn ")) {
 				choppedLine = line.split(" ");
-				float x = Float.valueOf(choppedLine[1]);
-				float y = Float.valueOf(choppedLine[2]);
-				float z = Float.valueOf(choppedLine[3]);
+				x = Float.valueOf(choppedLine[1]);
+				y = Float.valueOf(choppedLine[2]);
+				z = Float.valueOf(choppedLine[3]);
 				m.addNormal(new Vector3f(x, y, z));
 			}
 			else if (line.startsWith("f ")) {
@@ -50,6 +51,7 @@ public class OBJLoader {
 				m.addFace(new Face(vertexIndices, normalIndices));
 			}
 		}
+		reader.close();
 		
 		return m;
 	}

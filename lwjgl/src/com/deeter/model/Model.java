@@ -23,7 +23,7 @@ public class Model {
 	}
 	
 	public void addNormal(Vector3f normal) {
-		this.vertices.add(normal);
+		this.normals.add(normal);
 	}
 	
 	public void addNormals(List<Vector3f> normals) {
