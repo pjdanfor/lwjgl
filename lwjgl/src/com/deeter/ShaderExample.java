@@ -123,7 +123,7 @@ public class ShaderExample {
 	}
 	
 	private void setupMatrices() {
-		projectionMatrix = MatrixUtils.createProjectionMatrix(90f, WIDTH, HEIGHT, 0.1f, 100.0f);
+		projectionMatrix = MatrixUtils.createProjectionMatrix(60f, WIDTH, HEIGHT, 0.1f, 100.0f);
 		viewMatrix = new Matrix4f();
 		modelMatrix = new Matrix4f();
 		matrix44Buffer = BufferUtils.createFloatBuffer(16);
