@@ -9,35 +9,35 @@ public class ShaderProgram extends ShaderObject {
 	
 	@Override
 	public void initialize() {
-		setIdentifier(glCreateProgramObjectARB());
+		setIdentifier(glCreateProgram());
 	}
 	
 	public void link() {
-		glLinkProgramARB(getIdentifier());
-        if (glGetObjectParameteriARB(getIdentifier(), GL_OBJECT_LINK_STATUS_ARB) == GL_FALSE) {
+		glLinkProgram(getIdentifier());
+        if (glGetProgrami(getIdentifier(), GL_OBJECT_LINK_STATUS_ARB) == GL_FALSE) {
             System.err.println(getLogInfo(getIdentifier()));
             return;
         }
 	}
 	
 	public void validate() {
-		glValidateProgramARB(getIdentifier());
-        if (glGetObjectParameteriARB(getIdentifier(), GL_OBJECT_VALIDATE_STATUS_ARB) == GL_FALSE) {
+		glValidateProgram(getIdentifier());
+        if (glGetProgrami(getIdentifier(), GL_OBJECT_VALIDATE_STATUS_ARB) == GL_FALSE) {
         	System.err.println(getLogInfo(getIdentifier()));
         	return;
         }
 	}
 	
 	public void activate() {
-		glUseProgramObjectARB(getIdentifier());
+		glUseProgram(getIdentifier());
 	}
 	
 	public void deactivate() {
-		glUseProgramObjectARB(0);
+		glUseProgram(0);
 	}
 	
 	public void attachShader(Shader shader) {
-		glAttachObjectARB(getIdentifier(), shader.getIdentifier());
+		glAttachShader(getIdentifier(), shader.getIdentifier());
 	}
 	
 	public void detachShader(Shader shader) {

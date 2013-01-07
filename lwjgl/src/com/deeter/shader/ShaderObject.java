@@ -1,6 +1,7 @@
 package com.deeter.shader;
 
 import static org.lwjgl.opengl.ARBShaderObjects.*;
+import static org.lwjgl.opengl.GL20.*;
 
 public abstract class ShaderObject {
 	
@@ -28,7 +29,7 @@ public abstract class ShaderObject {
 	}
 	
 	protected String getLogInfo(int obj) {
-		return glGetInfoLogARB(obj, glGetObjectParameteriARB(obj, GL_OBJECT_INFO_LOG_LENGTH_ARB));
+		return glGetProgramInfoLog(obj, glGetProgrami(obj, GL_OBJECT_INFO_LOG_LENGTH_ARB));
 	}
 	
 	public int getIdentifier() {

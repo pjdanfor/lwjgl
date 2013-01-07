@@ -17,13 +17,13 @@ public class Shader extends ShaderObject {
 	@Override
 	public void initialize() {
     	try {
-	        setIdentifier(glCreateShaderObjectARB(getType()));
+	        setIdentifier(glCreateShader(getType()));
 	        
 	        if(isLegit()) {
-	        	glShaderSourceARB(getIdentifier(), readFileAsString(getPath()));
-		        glCompileShaderARB(getIdentifier());
+	        	glShaderSource(getIdentifier(), readFileAsString(getPath()));
+		        glCompileShader(getIdentifier());
 		        
-		        if (glGetObjectParameteriARB(getIdentifier(), GL_OBJECT_COMPILE_STATUS_ARB) == GL_FALSE)
+		        if (glGetProgrami(getIdentifier(), GL_OBJECT_COMPILE_STATUS_ARB) == GL_FALSE)
 		            throw new RuntimeException("Error creating shader: " + getLogInfo(getIdentifier()));
 	        }
     	}
