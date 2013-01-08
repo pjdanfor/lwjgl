@@ -37,7 +37,7 @@ public class Test {
      */
     public static void main(String[] args) {
     	
-        String filename = "/Users/Pat/Downloads/goblin_obj.obj";
+        String filename = "res/goblin.obj";
         String defaultTextureMaterial = "";
 
         boolean fullscreen = false;
