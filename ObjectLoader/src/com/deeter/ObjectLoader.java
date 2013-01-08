@@ -129,8 +129,9 @@ public class ObjectLoader {
     		return;
     	
     	// Attach Shaders to Program
-    	shaderProgram.attachShader(vertexShader);
-    	shaderProgram.attachShader(fragmentShader);
+    	shaderProgram.attachShader(vertexShader)
+    				 .attachShader(fragmentShader);
+    	// Link the program
     	shaderProgram.link();
     	
     	// Bind the fragment data location for variable 'outColor'
@@ -145,8 +146,8 @@ public class ObjectLoader {
     	viewMatrixLocation = shaderProgram.getUniformLocation(VIEW_MATRIX);
     	
     	// Detach and tear down the shaders once we have set the program up
-    	shaderProgram.detachShader(fragmentShader);
-		shaderProgram.detachShader(vertexShader);
+    	shaderProgram.detachShader(fragmentShader)
+					 .detachShader(vertexShader);
 		fragmentShader.tearDown();
 		vertexShader.tearDown();
     	
@@ -172,7 +173,7 @@ public class ObjectLoader {
 	}
 	
 	private void setupCube() {
-		MahTexturedCube daCube = new MahTexturedCube();
+		MahTexturedCube daCube = new MahTexturedCube(3);
 		indicesCount = daCube.getIndicesCount();
 		
 		vao = glGenVertexArrays();

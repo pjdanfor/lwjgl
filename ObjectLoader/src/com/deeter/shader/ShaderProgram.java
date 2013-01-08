@@ -49,12 +49,14 @@ public class ShaderProgram extends ShaderObject {
 		glUseProgram(0);
 	}
 	
-	public void attachShader(Shader shader) {
+	public ShaderProgram attachShader(Shader shader) {
 		glAttachShader(getIdentifier(), shader.getIdentifier());
+		return this;
 	}
 	
-	public void detachShader(Shader shader) {
+	public ShaderProgram detachShader(Shader shader) {
 		glDetachShader(getIdentifier(), shader.getIdentifier());
+		return this;
 	}
 	
 	public ShaderProgram bindAttribute(CharSequence name) {
