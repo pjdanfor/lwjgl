@@ -4,11 +4,28 @@ import static org.lwjgl.opengl.ARBBufferObject.GL_STATIC_DRAW_ARB;
 import static org.lwjgl.opengl.ARBBufferObject.GL_STREAM_DRAW_ARB;
 import static org.lwjgl.opengl.ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB;
 import static org.lwjgl.opengl.ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_LESS;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glDepthFunc;
+import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -24,13 +41,13 @@ import org.newdawn.slick.util.ResourceLoader;
 
 import com.deeter.shader.Shader;
 import com.deeter.shader.ShaderProgram;
-import com.deeter.utility.MahTexturedCube;
 import com.deeter.utility.LWJGLTimer;
+import com.deeter.utility.MahTexturedCube;
 import com.deeter.utility.VertexData;
 
 public class ObjectLoader {
 	
-	private static final String WINDOW_TITLE = "Fuck yeah";
+	private static final String WINDOW_TITLE = "YEAH";
 	private static final int WIDTH = 1024, HEIGHT = 768;
 	private static final String VERT_IN_POSITION = "in_Position";
 	private static final String VERT_IN_COLOR = "in_Color";
@@ -57,8 +74,8 @@ public class ObjectLoader {
 		this.setupOpenGL();
 		this.setupShaders();
 		this.setupTextures();
-		this.setupCamera();
 		this.setupCube();
+		this.setupCamera();
 		
 		while(!Display.isCloseRequested()) {
 			glViewport(0, 0, Display.getWidth(), Display.getHeight());
@@ -115,11 +132,13 @@ public class ObjectLoader {
     		return;
     	
     	// Attach Shaders to Program
-    	shaderProgram.attachShader(vertexShader)
-    				 .attachShader(fragmentShader);
-    	// Link the program
+    	shaderProgram.attachShader(vertexShader);
+    	shaderProgram.attachShader(fragmentShader);
     	shaderProgram.link();
     	
+    	// Bind the vertex array object
+    	vao = glGenVertexArrays();
+		glBindVertexArray(vao);
     	// Bind the fragment data location for variable 'outColor'
     	shaderProgram.bindFragment(FRAG_OUT_COLOR);
 		// Pass information from our VBO and VAO to the shader variables
@@ -132,8 +151,8 @@ public class ObjectLoader {
     	viewMatrixLocation = shaderProgram.getUniformLocation(VIEW_MATRIX);
     	
     	// Detach and tear down the shaders once we have set the program up
-    	shaderProgram.detachShader(fragmentShader)
-					 .detachShader(vertexShader);
+    	shaderProgram.detachShader(fragmentShader);
+		shaderProgram.detachShader(vertexShader);
 		fragmentShader.tearDown();
 		vertexShader.tearDown();
     	
@@ -162,8 +181,7 @@ public class ObjectLoader {
 		MahTexturedCube daCube = new MahTexturedCube(1);
 		indicesCount = daCube.getIndicesCount();
 		
-		vao = glGenVertexArrays();
-		glBindVertexArray(vao);
+		shaderProgram.activate();
 		vbo = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo);
 		glBufferData(GL_ARRAY_BUFFER_ARB, daCube.getVerticesFloatBuffer(), GL_STREAM_DRAW_ARB);
