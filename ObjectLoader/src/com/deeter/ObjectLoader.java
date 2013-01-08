@@ -85,7 +85,8 @@ public class ObjectLoader {
 		this.setupCube();
 		this.setupCamera();
 		
-		while(!Display.isCloseRequested()) {
+		while(!Display.isCloseRequested()
+				&& !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 			glViewport(0, 0, Display.getWidth(), Display.getHeight());
 			this.loopCycle(timer.update());
 			Display.update();
@@ -167,6 +168,7 @@ public class ObjectLoader {
 		vertexShader.tearDown();
     	
     	shaderProgram.validate();
+    	shaderProgram.activate();
 	}
 	
 	private void setupCamera() {
@@ -177,6 +179,7 @@ public class ObjectLoader {
 		camera.applyPerspectiveMatrix(projectionMatrixLocation);
 		camera.applyOptimalStates();
 		Mouse.setGrabbed(true);
+		shaderProgram.deactivate();
 	}
 	
 	private void setupTextures() {
@@ -191,7 +194,6 @@ public class ObjectLoader {
 		MahTexturedCube daCube = new MahTexturedCube(1);
 		indicesCount = daCube.getIndicesCount();
 		
-		shaderProgram.activate();
 		vbo = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER_ARB, vbo);
 		glBufferData(GL_ARRAY_BUFFER_ARB, daCube.getVerticesFloatBuffer(), GL_STREAM_DRAW_ARB);
@@ -210,37 +212,31 @@ public class ObjectLoader {
 	}
 	
 	private void loopCycle(int delta) {
+		shaderProgram.activate();
 		this.logicCycle(delta);
 		this.renderCycle();
+		shaderProgram.deactivate();
 	}
 	
 	private void logicCycle(int delta) {
-		shaderProgram.activate();
 		// Handle camera
 		camera.setAspectRatio((float) Display.getWidth() / (float) Display.getHeight());
 		if (Display.wasResized()) {
 			camera.applyPerspectiveMatrix(projectionMatrixLocation);
 		}
-		while (Keyboard.next()) {
-            if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
-                Mouse.setGrabbed(false);
-            }
-        }
 //		System.out.println(camera);
 		camera.applyTranslations(viewMatrixLocation);
 		if (Mouse.isGrabbed()) {
 			camera.processMouse();
-			camera.processKeyboard((float) delta);
+			camera.processKeyboard((float) delta, 5.0f);
 		}
 		modelMatrix = new Matrix4f();
-		shaderProgram.deactivate();
 	}
 	
 	private void renderCycle() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		texture.bind();
 		
-		shaderProgram.activate();
 		glBindVertexArray(vao);
 		shaderProgram.enableAttribute(VERT_IN_POSITION)
 					 .enableAttribute(VERT_IN_COLOR)
@@ -254,7 +250,6 @@ public class ObjectLoader {
 		 			 .disableAttribute(VERT_IN_COLOR)
 		 			 .disableAttribute(VERT_IN_TEX_COORD);
 		glBindVertexArray(0);
-		shaderProgram.deactivate();
 	}
 	
 	private void destroyOpenGL() {
