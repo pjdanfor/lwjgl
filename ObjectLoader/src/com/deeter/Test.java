@@ -8,9 +8,9 @@ import java.util.logging.Logger;
 
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.GLU;
 
 import com.deeter.obj.builder.Build;
 import com.deeter.obj.builder.Face;
@@ -29,6 +29,7 @@ public class Test {
     /** Desired frame time */
     private static final int FRAMERATE = 60;
     private static boolean finished;
+    private static PatCamera camera;
 
     /**
      * Application init
@@ -56,6 +57,7 @@ public class Test {
 
         try {
             init(fullscreen);
+            setupCamera();
             run(filename, defaultTextureMaterial);
         } catch (Exception e) {
             e.printStackTrace(System.err);
@@ -222,15 +224,20 @@ public class Test {
         // Create default display of 640x480
         Display.create();
 
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
-        GL11.glLoadIdentity();
-        float fAspect = (float) Display.getDisplayMode().getWidth() / (float) Display.getDisplayMode().getHeight();
-        GLU.gluPerspective(45.0f, fAspect, 0.5f, 400.0f);
-
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
-        GL11.glViewport(0, 0, Display.getDisplayMode().getWidth() - 100, Display.getDisplayMode().getHeight() - 100);
+        GL11.glViewport(0, 0, Display.getDisplayMode().getWidth(), Display.getDisplayMode().getHeight());
     }
+    
+    private static void setupCamera() {
+		camera = new PatCamera.Builder()
+			.setAspectRatio((float) Display.getDisplayMode().getWidth() / (float) Display.getDisplayMode().getHeight())
+			.setFieldOfView(60)
+			.build();
+		camera.applyPerspectiveMatrix();
+		camera.applyOptimalStates();
+		Mouse.setGrabbed(true);
+	}
 
     /**
      * Runs the program (the "main loop")
@@ -289,46 +296,14 @@ public class Test {
         }
         System.err.println("Finally ready to draw things.");
 
-        float anglex = 0;
-        float angley = 0;
-        float anglez = 0;
-        float anglexInc = .25f;
-        float angleyInc = .005f;
-        float anglezInc = .25f;
-        float translatex = 0;
-        float translatey = 0f;
-        float translatez = -100f;
-        float incrementx = 0;
-        float incrementy = 0;
-        float incrementz = -0.1f;
-        float zmax = .10f;
-        float zmin = -300f;
-
         while (!finished) {
-            GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadIdentity();
-
-            // add some arbitrary rotation and translation of the viewpoint just to make things less boring
-            anglex = (anglex + anglexInc) % 360;
-            angley = (angley + angleyInc) % 360;
-            anglez = (anglez + anglezInc) % 360;
-            if (anglez > 360) {
-                anglez = 0;
-            }
-            translatex += incrementx;
-            translatey += incrementy;
-            translatez += incrementz;
-            if (translatez <= zmin || translatez >= zmax) {
-                incrementz = -incrementz;
-            }
-//            System.err.println("positioning at  " + translatex + ", " + translatey + ", " + translatez + " rotation " + anglex + ", " + angley + ", " + anglez);
-            GL11.glTranslated(0, 0, translatez);
-            GL11.glTranslated(0, translatey, 0);
-            GL11.glTranslated(translatex, 0, 0);
-            GL11.glRotatef(anglez, 0.0f, 0.0f, 1.0f);
-            GL11.glRotatef(angley, 0.0f, 1.0f, 0.0f);
-            GL11.glRotatef(anglex, 1.0f, 0.0f, 0.0f);
-
+            GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+            camera.applyTranslations();
+            if (Mouse.isGrabbed()) {
+    			camera.processMouse();
+    			camera.processKeyboard(16);
+    		}
             // Always call Window.update(), all the time - it does some behind the
             // scenes work, and also displays the rendered output
             Display.update();
@@ -340,7 +315,7 @@ public class Test {
             else if (Display.isActive()) {
                 logic();
                 GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
-                GL11.glColor3f(1.0f, 0.5f, 0.1f);
+                GL11.glColor3f(0.49f, 0.2f, 0.043f);
                 scene.render();
                 Display.sync(FRAMERATE);
             } // The window is not in the foreground, so we can allow other stuff to run and infrequently update

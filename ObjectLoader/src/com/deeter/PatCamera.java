@@ -6,6 +6,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GLContext;
+import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -328,12 +329,30 @@ public class PatCamera implements Camera {
             glEnable(GL_DEPTH_CLAMP);
         }
 	}
+	
+	public void applyPerspectiveMatrix() {
+		glPushAttrib(GL_TRANSFORM_BIT);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        GLU.gluPerspective(fov, aspectRatio, zNear, zFar);
+        glPopAttrib();
+	}
 
 	@Override
 	public void applyPerspectiveMatrix(int uniformLocation) {
 		projectionMatrix = MatrixUtils.createProjectionMatrix(this.fov, this.aspectRatio, this.zNear, this.zFar);
 		projectionMatrix.store(matrix44Buffer); matrix44Buffer.flip();
 		glUniformMatrix4(uniformLocation, false, matrix44Buffer);
+	}
+	
+	public void applyTranslations() {
+		glPushAttrib(GL_TRANSFORM_BIT);
+        glMatrixMode(GL_MODELVIEW);
+        glRotatef(pitch, 1, 0, 0);
+        glRotatef(yaw, 0, 1, 0);
+        glRotatef(roll, 0, 0, 1);
+        glTranslatef(-x, -y, -z);
+        glPopAttrib();
 	}
 	
 	@Override
