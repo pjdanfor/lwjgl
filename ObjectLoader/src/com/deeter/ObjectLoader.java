@@ -20,12 +20,14 @@ import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.opengl.GL20.glUniformMatrix4;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -35,6 +37,8 @@ import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.PixelFormat;
+import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
@@ -55,6 +59,7 @@ public class ObjectLoader {
 	private static final String FRAG_OUT_COLOR = "outColor";
 	private static final String PROJECTION_MATRIX = "projectionMatrix";
 	private static final String VIEW_MATRIX = "viewMatrix";
+	private static final String MODEL_MATRIX = "modelMatrix";
 	
 	private LWJGLTimer timer;
 	private PatCamera camera;
@@ -69,6 +74,9 @@ public class ObjectLoader {
 	// Moving variables
 	private int projectionMatrixLocation = 0;
 	private int viewMatrixLocation = 0;
+	private int modelMatrixLocation = 0;
+	private Matrix4f modelMatrix;
+	private FloatBuffer matrix44Buffer = null;
 
 	public ObjectLoader() {
 		this.setupOpenGL();
@@ -110,6 +118,7 @@ public class ObjectLoader {
 		
 		timer = new LWJGLTimer();
 		timer.initialize(WINDOW_TITLE);
+		matrix44Buffer = BufferUtils.createFloatBuffer(16);
 	}
 	
 	private void setupShaders() {    	
@@ -149,6 +158,7 @@ public class ObjectLoader {
     	// Get matrices uniform location
     	projectionMatrixLocation = shaderProgram.getUniformLocation(PROJECTION_MATRIX);
     	viewMatrixLocation = shaderProgram.getUniformLocation(VIEW_MATRIX);
+    	modelMatrixLocation = shaderProgram.getUniformLocation(MODEL_MATRIX);
     	
     	// Detach and tear down the shaders once we have set the program up
     	shaderProgram.detachShader(fragmentShader);
@@ -219,11 +229,10 @@ public class ObjectLoader {
 //		System.out.println(camera);
 		camera.applyTranslations(viewMatrixLocation);
 		if (Mouse.isGrabbed()) {
-			if (delta <= 0)
-				delta = 1;
 			camera.processMouse();
 			camera.processKeyboard((float) delta);
 		}
+		modelMatrix = new Matrix4f();
 		shaderProgram.deactivate();
 	}
 	

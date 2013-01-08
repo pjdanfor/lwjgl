@@ -9,7 +9,6 @@ public class LWJGLTimer {
 	private long lastFPS;
 	private long lastTime;
 	private int elapsedTime;
-	private boolean firstRun;
 	private String windowTitle;
 	
 	public LWJGLTimer() {}
@@ -17,7 +16,6 @@ public class LWJGLTimer {
 	public void initialize(String windowTitle) {
 		lastTime = getTime();
 		lastFPS = getTime();
-		firstRun = false;
 		this.windowTitle = windowTitle;
 	}
 	
@@ -26,19 +24,11 @@ public class LWJGLTimer {
 	}
 	
 	public int update() {
-		if (firstRun) {
-			firstRun = false;
-			lastTime = getTime();
-			lastFPS = getTime();
-			return 0;
-		}
-		else {
-			long time = getTime();
-			elapsedTime = (int) (time - lastTime);
-			lastTime = time;
-			updateFPS();
-			return elapsedTime;
-		}
+		updateFPS();
+		long time = getTime();
+		elapsedTime = (int) (time - lastTime);
+		lastTime = time;
+		return elapsedTime;
 	}
 	
 	public void updateFPS() {

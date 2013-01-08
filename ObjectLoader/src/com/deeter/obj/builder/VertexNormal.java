@@ -1,9 +1,5 @@
 package com.deeter.obj.builder;
 
-import java.util.*;
-import java.text.*;
-import java.io.*;
-import java.io.IOException;
 
 public class VertexNormal {
     public float x = 0;
@@ -11,21 +7,23 @@ public class VertexNormal {
     public float z = 0;
 
     public void add(float x, float y, float z) {
-	this.x += x;
-	this.y += y;
-	this.z += z;
+    	this.x += x;
+    	this.y += y;
+    	this.z += z;
     }
 
     public VertexNormal(float x, float y, float z) {
-	this.x = x;
-	this.y = y;
-	this.z = z;
+    	this.x = x;
+    	this.y = y;
+    	this.z = z;
     }
 
     public String toString() {
-	if(null == this)
-	    return "null";
-	else
-	    return x+","+y+","+z;
+    	if (null == this) {
+    		return "null";
+    	}
+    	else {
+    		return x + "," + y + "," + z;
+    	}
     }
 }

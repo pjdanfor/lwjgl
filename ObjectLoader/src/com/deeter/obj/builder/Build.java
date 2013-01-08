@@ -46,12 +46,10 @@ public class Build implements BuilderInterface {
 
     public void addVertexGeometric(float x, float y, float z) {
         verticesG.add(new VertexGeometric(x, y, z));
-//        System.err.println("Added geometric vertex " + verticesG.size() + " = " + verticesG.get(verticesG.size() - 1));
     }
 
     public void addVertexTexture(float u, float v) {
         verticesT.add(new VertexTexture(u, v));
-//        System.err.println("Added texture  vertex " + verticesT.size() + " = " + verticesT.get(verticesT.size() - 1));
     }
 
     public void addVertexNormal(float x, float y, float z) {

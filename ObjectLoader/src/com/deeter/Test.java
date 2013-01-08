@@ -37,7 +37,7 @@ public class Test {
      */
     public static void main(String[] args) {
     	
-        String filename = "res/bunny.obj";
+        String filename = "/Users/Pat/Downloads/goblin_obj.obj";
         String defaultTextureMaterial = "";
 
         boolean fullscreen = false;
@@ -294,21 +294,19 @@ public class Test {
             System.err.println("Adding VBO with text id " + currentTextureID + ", with " + triangleList.size() + " triangles to scene.");
             scene.addVBO(vbo);
         }
-        System.err.println("Finally ready to draw things.");
 
         while (!finished) {
             GL11.glLoadIdentity();
             GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+            
             camera.applyTranslations();
             if (Mouse.isGrabbed()) {
     			camera.processMouse();
-    			camera.processKeyboard(16);
+    			camera.processKeyboard(16, 20.0f);
     		}
-            // Always call Window.update(), all the time - it does some behind the
-            // scenes work, and also displays the rendered output
+            
             Display.update();
 
-            // Check for close requests
             if (Display.isCloseRequested()) {
                 finished = true;
             } // The window is in the foreground, so render!
@@ -316,7 +314,10 @@ public class Test {
                 logic();
                 GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
                 GL11.glColor3f(0.49f, 0.2f, 0.043f);
-                scene.render();
+                for (int i = 0; i < 10; i++) {
+                	scene.render();
+                    GL11.glTranslatef(100.0f, 0, 0);
+                }
                 Display.sync(FRAMERATE);
             } // The window is not in the foreground, so we can allow other stuff to run and infrequently update
             else {
@@ -339,7 +340,6 @@ public class Test {
      * Do any cleanup
      */
     private static void cleanup() {
-        // Close the window
         Display.destroy();
     }
 
@@ -347,7 +347,6 @@ public class Test {
      * Do all calculations, handle input, etc.
      */
     private static void logic() {
-        // Example input handler: we'll check for the ESC key and exit if it is pressed
         if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
             finished = true;
         }

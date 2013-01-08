@@ -69,15 +69,10 @@ public class Parse {
         fileReader = new FileReader(objFile);
         bufferedReader = new BufferedReader(fileReader);
 
-        String line = null;
-
-        while (true) {
-            line = bufferedReader.readLine();
-            if (null == line) {
-                break;
-            }
-
-            line = line.trim();
+        String line;
+        
+        while((line = bufferedReader.readLine()) != null) {
+        	line = line.trim();
 
             if (line.length() == 0) {
                 continue;
@@ -122,6 +117,7 @@ public class Parse {
             }
             lineCount++;
         }
+        
         bufferedReader.close();
 
         System.err.println("Loaded " + lineCount + " lines");

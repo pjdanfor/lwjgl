@@ -1,13 +1,10 @@
 package com.deeter.utility;
 
 import java.nio.IntBuffer;
+
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.awt.*;
-import java.util.*;
-import org.lwjgl.BufferUtils;
 
 public class VBO {
 
@@ -24,7 +21,6 @@ public class VBO {
     public final static int ATTR_V_OFFSET_FLOATS = 0;
     public final static int ATTR_N_OFFSET_FLOATS = ATTR_V_FLOATS_PER;
     public final static int ATTR_N_OFFSET_BYTES = ATTR_N_OFFSET_FLOATS * FL_SIZE;
-    ;
 
     public final static int ATTR_T_OFFSET_FLOATS = ATTR_V_FLOATS_PER + ATTR_N_FLOATS_PER;
     public final static int ATTR_T_OFFSET_BYTES = ATTR_T_OFFSET_FLOATS * FL_SIZE;
@@ -46,8 +42,6 @@ public class VBO {
     }
 
     public void render() {
-
-
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textId);    // Bind The Texture
 

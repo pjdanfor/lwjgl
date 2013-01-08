@@ -1,9 +1,5 @@
 package com.deeter.obj.parser;
 
-import java.util.*;
-import java.text.*;
-import java.io.*;
-import java.io.IOException;
 
 public interface BuilderInterface {
 

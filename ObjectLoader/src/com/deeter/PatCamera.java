@@ -169,10 +169,6 @@ public class PatCamera implements Camera {
 
 	@Override
 	public void processKeyboard(float delta) {
-		if (delta <= 0) {
-			throw new IllegalArgumentException("delta " + delta + " is 0 or is smaller than 0");
-		}
-		
 		boolean keyUp = Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W);
 		boolean keyDown = Keyboard.isKeyDown(Keyboard.KEY_DOWN) || Keyboard.isKeyDown(Keyboard.KEY_S);
 		boolean keyLeft = Keyboard.isKeyDown(Keyboard.KEY_LEFT) || Keyboard.isKeyDown(Keyboard.KEY_A);
@@ -214,10 +210,6 @@ public class PatCamera implements Camera {
 
 	@Override
 	public void processKeyboard(float delta, float speed) {
-		if (delta <= 0) {
-            throw new IllegalArgumentException("delta " + delta + " is 0 or is smaller than 0");
-        }
-
         boolean keyUp = Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W);
         boolean keyDown = Keyboard.isKeyDown(Keyboard.KEY_DOWN) || Keyboard.isKeyDown(Keyboard.KEY_S);
         boolean keyLeft = Keyboard.isKeyDown(Keyboard.KEY_LEFT) || Keyboard.isKeyDown(Keyboard.KEY_A);
@@ -259,10 +251,6 @@ public class PatCamera implements Camera {
 
 	@Override
 	public void processKeyboard(float delta, float speedX, float speedY, float speedZ) {
-		if (delta <= 0) {
-            throw new IllegalArgumentException("delta " + delta + " is 0 or is smaller than 0");
-        }
-
         boolean keyUp = Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W);
         boolean keyDown = Keyboard.isKeyDown(Keyboard.KEY_DOWN) || Keyboard.isKeyDown(Keyboard.KEY_S);
         boolean keyLeft = Keyboard.isKeyDown(Keyboard.KEY_LEFT) || Keyboard.isKeyDown(Keyboard.KEY_A);

@@ -4,9 +4,10 @@ import java.util.*;
 
 public class Scene {
 
-    ArrayList<VBO> vboList = new ArrayList<VBO>();
+    ArrayList<VBO> vboList;
 
     public Scene() {
+    	vboList = new ArrayList<VBO>();
     }
 
     public void addVBO(VBO r) {
@@ -14,8 +15,8 @@ public class Scene {
     }
 
     public void render() {
-        for (int loopi = 0; loopi < vboList.size(); loopi++) {
-            vboList.get(loopi).render();
+        for (int i = 0; i < vboList.size(); i++) {
+            vboList.get(i).render();
         }
     }
 }

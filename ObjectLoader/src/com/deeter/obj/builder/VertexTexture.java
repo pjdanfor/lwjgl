@@ -1,9 +1,5 @@
 package com.deeter.obj.builder;
 
-import java.util.*;
-import java.text.*;
-import java.io.*;
-import java.io.IOException;
 
 public class VertexTexture {
 

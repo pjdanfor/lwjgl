@@ -13,8 +13,6 @@ import org.lwjgl.opengl.ARBVertexBufferObject;
 public class VBOFactory {
 
     public static VBO build(int textureID, ArrayList<Face> triangles) {
-        //	System.err.println("VBOFactory.build: building a vbo!");
-
         if (triangles.size() <= 0) {
             throw new RuntimeException("Can not build a VBO if we have no triangles with which to build it.");
         }
