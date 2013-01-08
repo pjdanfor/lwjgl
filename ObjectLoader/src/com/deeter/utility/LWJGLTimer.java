@@ -3,7 +3,7 @@ package com.deeter.utility;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 
-public class PatTimer {
+public class LWJGLTimer {
 
 	private int fps = 0;
 	private long lastFPS;
@@ -12,7 +12,7 @@ public class PatTimer {
 	private boolean firstRun;
 	private String windowTitle;
 	
-	public PatTimer() {}
+	public LWJGLTimer() {}
 	
 	public void initialize(String windowTitle) {
 		lastTime = getTime();

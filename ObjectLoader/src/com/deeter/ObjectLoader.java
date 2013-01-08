@@ -5,21 +5,10 @@ import static org.lwjgl.opengl.ARBBufferObject.GL_STREAM_DRAW_ARB;
 import static org.lwjgl.opengl.ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB;
 import static org.lwjgl.opengl.ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
-import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL30.*;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-
-import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -36,8 +25,7 @@ import org.newdawn.slick.util.ResourceLoader;
 import com.deeter.shader.Shader;
 import com.deeter.shader.ShaderProgram;
 import com.deeter.utility.MahTexturedCube;
-import com.deeter.utility.PatCamera;
-import com.deeter.utility.PatTimer;
+import com.deeter.utility.LWJGLTimer;
 import com.deeter.utility.VertexData;
 
 public class ObjectLoader {
@@ -51,7 +39,7 @@ public class ObjectLoader {
 	private static final String PROJECTION_MATRIX = "projectionMatrix";
 	private static final String VIEW_MATRIX = "viewMatrix";
 	
-	private PatTimer timer;
+	private LWJGLTimer timer;
 	private PatCamera camera;
 	
 	private ShaderProgram shaderProgram;
@@ -59,8 +47,6 @@ public class ObjectLoader {
 	// Quad variables
 	private int vao, vbo, ibo;
 	private int indicesCount = 0;
-	private VertexData[] vertices = null;
-	private ByteBuffer verticesByteBuffer = null;
 	// Texture variables
 	private Texture texture;
 	// Moving variables
@@ -105,7 +91,7 @@ public class ObjectLoader {
 		glClearColor(0.4f, 0.6f, 0.9f, 0f);
 		glViewport(0, 0, WIDTH, HEIGHT);
 		
-		timer = new PatTimer();
+		timer = new LWJGLTimer();
 		timer.initialize(WINDOW_TITLE);
 	}
 	
@@ -173,7 +159,7 @@ public class ObjectLoader {
 	}
 	
 	private void setupCube() {
-		MahTexturedCube daCube = new MahTexturedCube(3);
+		MahTexturedCube daCube = new MahTexturedCube(1);
 		indicesCount = daCube.getIndicesCount();
 		
 		vao = glGenVertexArrays();

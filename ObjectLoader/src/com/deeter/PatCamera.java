@@ -1,4 +1,4 @@
-package com.deeter.utility;
+package com.deeter;
 
 import java.nio.FloatBuffer;
 
@@ -8,6 +8,9 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+
+import com.deeter.utility.Camera;
+import com.deeter.utility.MatrixUtils;
 
 import static java.lang.Math.*;
 import static org.lwjgl.opengl.ARBDepthClamp.GL_DEPTH_CLAMP;
