@@ -28,9 +28,7 @@ import org.newdawn.slick.util.ResourceLoader;
 import com.deeter.obj.builder.BuildHelper;
 import com.deeter.shader.ShaderProgram;
 import com.deeter.utility.LWJGLTimer;
-import com.deeter.utility.MahTexturedCube;
 import com.deeter.utility.Scene;
-import com.deeter.utility.VertexData;
 
 public class ObjectLoader {
 	
@@ -40,14 +38,8 @@ public class ObjectLoader {
 	private LWJGLTimer timer;
 	private PatCamera camera;
 	private ArrayList<Scene> scenes;
-	
 	private ShaderProgram shaderProgram;
-	// Quad variables
-	private int vao, vbo, ibo;
-	private int indicesCount = 0;
-	// Texture variables
-	private Texture texture;
-	// Moving variables
+	private int vao = 0;
 	private int projectionMatrixLocation = 0;
 	private int viewMatrixLocation = 0;
 	private int modelMatrixLocation = 0;
