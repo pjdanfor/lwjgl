@@ -14,6 +14,6 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="ObjectLoader/lib/lwjgl/native"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/slick/slick-util.jar"/>
+	<classpathentry kind="lib" path="lib/slick-util/slick-util.jar" sourcepath="lib/slick-util/source/slick-util-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

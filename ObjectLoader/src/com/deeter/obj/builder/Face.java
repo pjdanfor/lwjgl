@@ -5,18 +5,16 @@ import java.util.ArrayList;
 public class Face {
 
 	public ArrayList<FaceVertex> vertices = new ArrayList<FaceVertex>();
+	public VertexNormal faceNormal = new VertexNormal(0, 0, 0);
     public Material material = null;
     public Material map = null;
 
-    public Face() {
-    }
+    public Face() {}
 
     public void add(FaceVertex vertex) {
         vertices.add(vertex);
     }
-    public VertexNormal faceNormal = new VertexNormal(0, 0, 0);
-
-    // @TODO: This code assumes the face is a triangle.  
+    
     public void calculateTriangleNormal() {
         float[] edge1 = new float[3];
         float[] edge2 = new float[3];
