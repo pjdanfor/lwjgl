@@ -18,7 +18,7 @@ import com.deeter.utility.VBOFactory;
 
 public class BuildHelper {
 
-	public static Scene setupScene(String filename, String defaultTextureMaterial) {
+	public static Scene setupScene(String filename, String defaultTextureMaterial, float vertexOffsetX, float vertexOffsetY, float vertexOffsetZ) {
 		Scene scene = new Scene();
 
         System.err.println("Parsing WaveFront OBJ file");
@@ -62,9 +62,9 @@ public class BuildHelper {
             }
             System.err.println("Building VBO");
 
-            VBO vbo = VBOFactory.build(currentTextureID, triangleList);
+            VBO vbo = VBOFactory.build(currentTextureID, triangleList, vertexOffsetX, vertexOffsetY, vertexOffsetZ);
 
-            System.err.println("Adding VBO with text id " + currentTextureID + ", with " + triangleList.size() + " triangles to scene.");
+            System.err.println("Adding VBO with id of " + vbo.getVerticeAttributesID() + " and text id " + currentTextureID + ", with " + triangleList.size() + " triangles to scene.");
             scene.addVBO(vbo);
         }
         

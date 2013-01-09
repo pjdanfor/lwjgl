@@ -1,5 +1,7 @@
 package com.deeter.utility;
 
+import static org.lwjgl.opengl.GL15.*;
+
 import com.deeter.obj.builder.FaceVertex;
 import com.deeter.obj.builder.Face;
 import java.util.*;
@@ -8,11 +10,10 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.ARBVertexBufferObject;
 
 public class VBOFactory {
 
-    public static VBO build(int textureID, ArrayList<Face> triangles) {
+    public static VBO build(int textureID, ArrayList<Face> triangles, float vertexOffsetX, float vertexOffsetY, float vertexOffsetZ) {
         if (triangles.size() <= 0) {
             throw new RuntimeException("Can not build a VBO if we have no triangles with which to build it.");
         }
@@ -41,33 +42,29 @@ public class VBOFactory {
         int verticeAttributesCount = nextVertexIndex;
         int indicesCount = triangles.size() * 3;
 
-        int numMIssingNormals = 0;
+        int numMissingNormals = 0;
         int numMissingUV = 0;
         FloatBuffer verticeAttributes;
-        System.err.println("VBOFactory.build: Creating buffer of size " + verticeAttributesCount + " vertices at " + VBO.ATTR_SZ_FLOATS + " floats per vertice for a total of " + (verticeAttributesCount * VBO.ATTR_SZ_FLOATS) + " floats.");
-        verticeAttributes = BufferUtils.createFloatBuffer(verticeAttributesCount * VBO.ATTR_SZ_FLOATS);
+        System.err.println("VBOFactory.build: Creating buffer of size " + verticeAttributesCount + " vertices at " + VBO.elementCount + " floats per vertice for a total of " + (verticeAttributesCount * VBO.elementCount) + " floats.");
+        verticeAttributes = BufferUtils.createFloatBuffer(verticeAttributesCount * VBO.elementCount);
         if (null == verticeAttributes) {
-            System.err.println("VBOFactory.build: ERROR Unable to allocate verticeAttributes buffer of size " + (verticeAttributesCount * VBO.ATTR_SZ_FLOATS) + " floats.");
+            System.err.println("VBOFactory.build: ERROR Unable to allocate verticeAttributes buffer of size " + (verticeAttributesCount * VBO.elementCount) + " floats.");
         }
         for (FaceVertex vertex : faceVertexList) {
-            verticeAttributes.put(vertex.v.x);
-            verticeAttributes.put(vertex.v.y);
-            verticeAttributes.put(vertex.v.z);
+            verticeAttributes.put(vertex.v.x + vertexOffsetX);
+            verticeAttributes.put(vertex.v.y + vertexOffsetY);
+            verticeAttributes.put(vertex.v.z + vertexOffsetZ);
             if (vertex.n == null) {
-                // @TODO: What's a reasonable default normal?  Maybe add code later to calculate normals if not present in .obj file.
                 verticeAttributes.put(1.0f);
                 verticeAttributes.put(1.0f);
                 verticeAttributes.put(1.0f);
-                numMIssingNormals++;
+                numMissingNormals++;
             } else {
                 verticeAttributes.put(vertex.n.x);
                 verticeAttributes.put(vertex.n.y);
                 verticeAttributes.put(vertex.n.z);
-            }
-            // @TODO: What's a reasonable default texture coord?  
+            } 
             if (vertex.t == null) {
-//                verticeAttributes.put(0.5f);
-//                verticeAttributes.put(0.5f);
                     verticeAttributes.put((float)Math.random());
                     verticeAttributes.put((float)Math.random());
                 numMissingUV++;
@@ -78,8 +75,7 @@ public class VBOFactory {
         }
         verticeAttributes.flip();
 
-        System.err.println("Had " + numMIssingNormals + " missing normals and " + numMissingUV + " missing UV coords");
-
+        System.err.println("Had " + numMissingNormals + " missing normals and " + numMissingUV + " missing UV coords");
 
         IntBuffer indices;    // indices into the vertices, to specify triangles.
         indices = BufferUtils.createIntBuffer(indicesCount);
@@ -91,23 +87,17 @@ public class VBOFactory {
         }
         indices.flip();
 
-        // Allrighty!  Now give them to OpenGL!
-        IntBuffer verticeAttributesIDBuf = BufferUtils.createIntBuffer(1);
+        int vertexAttributesVBO = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vertexAttributesVBO);
+        glBufferData(GL_ARRAY_BUFFER, verticeAttributes, GL_STATIC_DRAW);
 
-        ARBVertexBufferObject.glGenBuffersARB(verticeAttributesIDBuf);
-        ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, verticeAttributesIDBuf.get(0));
-        ARBVertexBufferObject.glBufferDataARB(ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB, verticeAttributes, ARBVertexBufferObject.GL_STATIC_DRAW_ARB);
-
-        IntBuffer indicesIDBuf = BufferUtils.createIntBuffer(1);
-        ARBVertexBufferObject.glGenBuffersARB(indicesIDBuf);
-        ARBVertexBufferObject.glBindBufferARB(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, indicesIDBuf.get(0));
-        ARBVertexBufferObject.glBufferDataARB(ARBVertexBufferObject.GL_ELEMENT_ARRAY_BUFFER_ARB, indices, ARBVertexBufferObject.GL_STATIC_DRAW_ARB);
-
-        // our copy of the data is no longer necessary, it is safe in OpenGL.  
-        // We don't need to null this out but it makes the point.
+        int indicesVBO = glGenBuffers();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesVBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
+        
         verticeAttributes = null;
         indices = null;
 
-        return new VBO(textureID, verticeAttributesIDBuf.get(0), indicesIDBuf.get(0), indicesCount);
+        return new VBO(textureID, vertexAttributesVBO, indicesVBO, indicesCount);
     }
 }

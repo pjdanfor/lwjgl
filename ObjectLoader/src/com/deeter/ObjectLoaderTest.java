@@ -60,8 +60,8 @@ public class ObjectLoaderTest {
 	}
     
     private void setupScene() {
-    	goblinScene = BuildHelper.setupScene(filename, defaultTextureMaterial);
-    	bunnyScene = BuildHelper.setupScene("res/bunny.obj", defaultTextureMaterial);
+    	goblinScene = BuildHelper.setupScene(filename, defaultTextureMaterial, 0, 0, 0);
+    	bunnyScene = BuildHelper.setupScene("res/bunny.obj", defaultTextureMaterial, 0, 0, 0);
     }
 
     private void gameLoop() {
@@ -115,13 +115,13 @@ public class ObjectLoaderTest {
         
         GL11.glColor3f(0.49f, 0.2f, 0.043f);
         for (int i = 0; i < 10; i++) {
-        	goblinScene.render();
+        	goblinScene.render(null);
             GL11.glTranslatef(100.0f, 0, 0);
         }
-//        GL11.glLoadIdentity();
+
         GL11.glTranslatef(0, 50f, 0);
         for (int i = 0; i < 10; i++) {
-        	bunnyScene.render();
+        	bunnyScene.render(null);
         	GL11.glTranslatef(100.0f, 0, 0);
         }
     }

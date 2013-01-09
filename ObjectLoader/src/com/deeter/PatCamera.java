@@ -459,7 +459,7 @@ public class PatCamera implements Camera {
 			if (farClippingPlane <= 0) {
 				throw new IllegalArgumentException("farClippingPlane " + farClippingPlane + " was less than or equal to 0");
 			}
-			this.zNear = farClippingPlane;
+			this.zFar = farClippingPlane;
 			return this;
 		}
 		

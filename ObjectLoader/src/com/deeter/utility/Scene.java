@@ -2,6 +2,8 @@ package com.deeter.utility;
 
 import java.util.*;
 
+import com.deeter.shader.ShaderProgram;
+
 public class Scene {
 
     ArrayList<VBO> vboList;
@@ -14,9 +16,9 @@ public class Scene {
         vboList.add(r);
     }
 
-    public void render() {
+    public void render(ShaderProgram shaderProgram) {
         for (int i = 0; i < vboList.size(); i++) {
-            vboList.get(i).render();
+            vboList.get(i).render(shaderProgram);
         }
     }
 }

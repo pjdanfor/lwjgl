@@ -1,5 +1,7 @@
 package com.deeter.shader;
 
+import static org.lwjgl.opengl.ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB;
+import static org.lwjgl.opengl.ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB;
 import static org.lwjgl.opengl.ARBShaderObjects.GL_OBJECT_LINK_STATUS_ARB;
 import static org.lwjgl.opengl.ARBShaderObjects.GL_OBJECT_VALIDATE_STATUS_ARB;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
@@ -9,20 +11,62 @@ import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ShaderProgram extends ShaderObject {
+import org.lwjgl.opengl.ARBFragmentShader;
+import org.lwjgl.opengl.ARBVertexShader;
+
+import com.deeter.utility.StringUtils;
+
+public class ShaderProgram {
 	
-	private int attributeCounter;
-	private int fragmentDataCounter;
-	private Map<CharSequence, Integer> attributeMap;
-	private Map<CharSequence, Integer> fragmentDataMap;
+	public static final CharSequence VERT_IN_POSITION = "in_Position";
+	public static final CharSequence VERT_IN_NORMAL = "in_Normal";
+	public static final CharSequence VERT_IN_TEXTURE = "in_TextureCoord";
+	public static final CharSequence FRAG_OUT_COLOR = "outColor";
+	public static final CharSequence PROJECTION_MATRIX = "projectionMatrix";
+	public static final CharSequence VIEW_MATRIX = "viewMatrix";
+	public static final CharSequence MODEL_MATRIX = "modelMatrix";
 	
-	@Override
+	private String vertexShaderPath, fragmentShaderPath;
+	private Shader vertexShader, fragmentShader;
+	private int programID = 0;
+	private int attributeCounter, fragmentDataCounter;
+	private Map<CharSequence, Integer> attributeMap, fragmentDataMap;
+	
+	public ShaderProgram(String vertexShaderPath, String fragmentShaderPath) {
+		this.vertexShaderPath = vertexShaderPath;
+		this.fragmentShaderPath = fragmentShaderPath;
+		this.initialize();
+	}
+	
 	public void initialize() {
-		setIdentifier(glCreateProgram());
 		attributeCounter = 0;
 		fragmentDataCounter = 0;
 		attributeMap = new HashMap<CharSequence, Integer>();
 		fragmentDataMap = new HashMap<CharSequence, Integer>();
+		setupProgram();
+		setupShaders();
+	}
+	
+	private void setupProgram() {
+		setIdentifier(glCreateProgram());
+	}
+	
+	private void setupShaders() {
+		try {
+			vertexShader = new Shader(vertexShaderPath, ARBVertexShader.GL_VERTEX_SHADER_ARB);
+            fragmentShader = new Shader(fragmentShaderPath, ARBFragmentShader.GL_FRAGMENT_SHADER_ARB);
+		}
+		catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    	finally {
+    		if (!vertexShader.isLegit() || !fragmentShader.isLegit()) {
+    			System.err.println("A shader shit itself");
+    			System.exit(0);
+    		}
+    	}
+		attachShader(vertexShader);
+		attachShader(fragmentShader);
 	}
 	
 	public void link() {
@@ -54,9 +98,14 @@ public class ShaderProgram extends ShaderObject {
 		return this;
 	}
 	
-	public ShaderProgram detachShader(Shader shader) {
-		glDetachShader(getIdentifier(), shader.getIdentifier());
-		return this;
+	public void detachShaders() {
+		glDetachShader(getIdentifier(), vertexShader.getIdentifier());
+		glDetachShader(getIdentifier(), fragmentShader.getIdentifier());
+	}
+	
+	public void deleteShaders() {
+		vertexShader.delete();
+		fragmentShader.delete();
 	}
 	
 	public ShaderProgram bindAttribute(CharSequence name) {
@@ -74,9 +123,21 @@ public class ShaderProgram extends ShaderObject {
 		return this;
 	}
 	
+	public void enableAttributes() {
+		for (CharSequence attribute : attributeMap.keySet()) {
+			enableAttribute(attribute);
+		}
+	}
+	
 	public ShaderProgram enableAttribute(CharSequence name) {
 		glEnableVertexAttribArray(getAttributeLocation(name));
 		return this;
+	}
+	
+	public void disableAttributes() {
+		for (CharSequence attribute : attributeMap.keySet()) {
+			disableAttribute(attribute);
+		}
 	}
 	
 	public ShaderProgram disableAttribute(CharSequence name) {
@@ -93,18 +154,68 @@ public class ShaderProgram extends ShaderObject {
 		glBindFragDataLocation(getIdentifier(), fragmentDataCounter++, name);
 	}
 	
-	@Override
+	private void setIdentifier(int identifier) {
+		this.programID = identifier;
+	}
+	
+	public int getIdentifier() {
+		return this.programID;
+	}
+	
+	private int getAttributeLocation(CharSequence name) {
+		return attributeMap.get(name);
+	}
+	
 	public void delete() {
 		glDeleteProgram(getIdentifier());
 	}
 	
-	@Override
 	public void tearDown() {
 		deactivate();
 		delete();
 	}
 	
-	private int getAttributeLocation(CharSequence name) {
-		return attributeMap.get(name);
+	private String getLogInfo(int obj) {
+		return glGetProgramInfoLog(obj, glGetProgrami(obj, GL_OBJECT_INFO_LOG_LENGTH_ARB));
+	}
+	
+	// Shader class
+	
+	public class Shader {
+		
+		private int identifier;
+		
+		public Shader(String shaderPath, int type) {
+			try {
+				setIdentifier(glCreateShader(type));
+		        
+		        if(isLegit()) {
+		        	glShaderSource(getIdentifier(), StringUtils.readFileAsString(shaderPath));
+			        glCompileShader(getIdentifier());
+			        
+			        if (glGetProgrami(getIdentifier(), GL_OBJECT_COMPILE_STATUS_ARB) == GL_FALSE)
+			            throw new RuntimeException("Error creating shader: " + getLogInfo(getIdentifier()));
+		        }
+	    	}
+	    	catch(Exception e) {
+	    		delete();
+	    	}
+		}
+		
+		private void setIdentifier(int identifier) {
+			this.identifier = identifier;
+		}
+		
+		public int getIdentifier() {
+			return this.identifier;
+		}
+		
+		public void delete() {
+			glDeleteShader(getIdentifier());
+		}
+		
+		public boolean isLegit() {
+			return getIdentifier() != 0;
+		}
 	}
 }
