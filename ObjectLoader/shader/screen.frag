@@ -8,5 +8,5 @@ in vec2 pass_TextureCoord;
 out vec4 outColor;
 
 void main() {
-	outColor = texture(tex, pass_TextureCoord);
+	outColor = vec4(1.0, 0.4, 0.2, 1.0);
 }
