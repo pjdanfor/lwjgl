@@ -11,9 +11,65 @@ import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
 import com.deeter.ObjectLoaderTest;
+import com.deeter.obj.parser.Parse;
+import com.deeter.utility.Scene;
+import com.deeter.utility.VBO;
+import com.deeter.utility.VBOFactory;
 
 public class BuildHelper {
 
+	public static Scene setupScene(String filename, String defaultTextureMaterial) {
+		Scene scene = new Scene();
+
+        System.err.println("Parsing WaveFront OBJ file");
+        Build builder = new Build();
+        Parse obj = null;
+        try {
+            obj = new Parse(builder, filename);
+        } catch (java.io.FileNotFoundException e) {
+            System.err.println("Exception loading object!  e=" + e);
+            e.printStackTrace();
+        } catch (java.io.IOException e) {
+            System.err.println("Exception loading object!  e=" + e);
+            e.printStackTrace();
+        }
+        System.err.println("Done parsing WaveFront OBJ file");
+
+        System.err.println("Splitting OBJ file faces into list of faces per material");
+        ArrayList<ArrayList<Face>> facesByTextureList = BuildHelper.createFaceListsByMaterial(builder);
+        System.err.println("Done splitting OBJ file faces into list of faces per material, ended up with " + facesByTextureList.size() + " lists of faces.");
+
+        System.err.println("Loading default texture =" + defaultTextureMaterial);
+        int defaultTextureID = BuildHelper.setUpDefaultTexture(defaultTextureMaterial);
+        System.err.println("Done loading default texture =" + defaultTextureMaterial);
+
+        int currentTextureID = -1;
+        for (ArrayList<Face> faceList : facesByTextureList) {
+            if (faceList.isEmpty()) {
+                System.err.println("ERROR: got an empty face list.  That shouldn't be possible.");
+                continue;
+            }
+            System.err.println("Getting material " + faceList.get(0).material);
+            currentTextureID = BuildHelper.getMaterialID(faceList.get(0).material, defaultTextureID, builder);
+            System.err.println("Splitting any quads and throwing any faces with > 4 vertices.");
+            ArrayList<Face> triangleList = BuildHelper.splitQuads(faceList);
+            System.err.println("Calculating any missing vertex normals.");
+            BuildHelper.calcMissingVertexNormals(triangleList);
+            System.err.println("Ready to build VBO of " + triangleList.size() + " triangles");;
+
+            if (triangleList.size() <= 0) {
+                continue;
+            }
+            System.err.println("Building VBO");
+
+            VBO vbo = VBOFactory.build(currentTextureID, triangleList);
+
+            System.err.println("Adding VBO with text id " + currentTextureID + ", with " + triangleList.size() + " triangles to scene.");
+            scene.addVBO(vbo);
+        }
+        
+        return scene;
+	}
 	// load and bind the texture we will be using as a default texture for any missing textures, unspecified textures, and/or 
     // any materials that are not textures, since we are pretty much ignoring/not using those non-texture materials.
     //

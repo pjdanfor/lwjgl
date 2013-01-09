@@ -3,8 +3,8 @@ package com.deeter.utility;
 import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
 
 public class VBO {
 
@@ -17,21 +17,19 @@ public class VBO {
     public final static int ATTR_T_FLOATS_PER = 2;
     public final static int ATTR_SZ_FLOATS = ATTR_V_FLOATS_PER + ATTR_N_FLOATS_PER + ATTR_T_FLOATS_PER;
     public final static int ATTR_SZ_BYTES = ATTR_SZ_FLOATS * FL_SIZE;
-    public final static int ATTR_V_OFFSET_BYTES = 0;
     public final static int ATTR_V_OFFSET_FLOATS = 0;
+    public final static int ATTR_V_OFFSET_BYTES = 0;
     public final static int ATTR_N_OFFSET_FLOATS = ATTR_V_FLOATS_PER;
     public final static int ATTR_N_OFFSET_BYTES = ATTR_N_OFFSET_FLOATS * FL_SIZE;
-
     public final static int ATTR_T_OFFSET_FLOATS = ATTR_V_FLOATS_PER + ATTR_N_FLOATS_PER;
     public final static int ATTR_T_OFFSET_BYTES = ATTR_T_OFFSET_FLOATS * FL_SIZE;
     public final static int ATTR_V_STRIDE2_BYTES = ATTR_SZ_FLOATS * FL_SIZE;
     public final static int ATTR_N_STRIDE2_BYTES = ATTR_SZ_FLOATS * FL_SIZE;
     public final static int ATTR_T_STRIDE2_BYTES = ATTR_SZ_FLOATS * FL_SIZE;
 
-
     private int textId = 0;
-    private int verticeAttributesID = 0;      // Vertex Attributes VBO ID
-    private int indicesID = 0;      // indice VBO ID
+    private int verticeAttributesID = 0;
+    private int indicesID = 0;
     private int indicesCount = 0;
 
     public VBO(int textId, int verticeAttributesID, int indicesID, int indicesCount) {
@@ -42,37 +40,36 @@ public class VBO {
     }
 
     public void render() {
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textId);    // Bind The Texture
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, textId);
 
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, verticeAttributesID);
+        glBindBuffer(GL_ARRAY_BUFFER, verticeAttributesID);
 
-        GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-        GL11.glVertexPointer(3, GL11.GL_FLOAT, ATTR_V_STRIDE2_BYTES, ATTR_V_OFFSET_BYTES);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(3, GL_FLOAT, ATTR_V_STRIDE2_BYTES, ATTR_V_OFFSET_BYTES);
 
-        GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
-        GL11.glNormalPointer(GL11.GL_FLOAT, ATTR_N_STRIDE2_BYTES, ATTR_N_OFFSET_BYTES);
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glNormalPointer(GL_FLOAT, ATTR_N_STRIDE2_BYTES, ATTR_N_OFFSET_BYTES);
 
-        GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-        GL11.glTexCoordPointer(2, GL11.GL_FLOAT, ATTR_T_STRIDE2_BYTES, ATTR_T_OFFSET_BYTES);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(2, GL_FLOAT, ATTR_T_STRIDE2_BYTES, ATTR_T_OFFSET_BYTES);
 
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesID);
-        GL11.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_INT, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesID);
+        glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, 0);
 
-        GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-        GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
-        GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_NORMAL_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        glDisable(GL_TEXTURE_2D);
     }
 
     public void destroy() {
-        // NOTE: We don't delete the textureID
         IntBuffer ib = BufferUtils.createIntBuffer(1);
         ib.reset();
         ib.put(verticeAttributesID);
-        GL15.glDeleteBuffers(ib);
+        glDeleteBuffers(ib);
         ib.reset();
         ib.put(indicesID);
-        GL15.glDeleteBuffers(ib);
+        glDeleteBuffers(ib);
     }
 }

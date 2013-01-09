@@ -1,20 +1,13 @@
 package com.deeter;
 
-import java.util.ArrayList;
-
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
-import com.deeter.obj.builder.Build;
 import com.deeter.obj.builder.BuildHelper;
-import com.deeter.obj.builder.Face;
-import com.deeter.obj.parser.Parse;
 import com.deeter.utility.Scene;
-import com.deeter.utility.VBO;
-import com.deeter.utility.VBOFactory;
 
 public class ObjectLoaderTest {
 
@@ -26,14 +19,15 @@ public class ObjectLoaderTest {
     private String defaultTextureMaterial = "";
     boolean fullscreen = false;
     private PatCamera camera;
-    private Scene scene;
+    private Scene goblinScene;
+    private Scene bunnyScene;
     
     public ObjectLoaderTest() {
         try {
         	this.setupOpenGL(fullscreen);
             this.setupCamera();
             this.setupScene();
-            this.gameLoop(filename, defaultTextureMaterial);
+            this.gameLoop();
         } catch (Exception e) {
             e.printStackTrace(System.err);
             Sys.alert(WINDOW_TITLE, "An error occured and the program will exit.");
@@ -61,61 +55,16 @@ public class ObjectLoaderTest {
 			.build();
 		camera.applyPerspectiveMatrix();
 		camera.applyOptimalStates();
+		camera.setPosition(500f, 50f, 200f);
 		Mouse.setGrabbed(true);
 	}
     
     private void setupScene() {
-    	scene = new Scene();
-
-        System.err.println("Parsing WaveFront OBJ file");
-        Build builder = new Build();
-        Parse obj = null;
-        try {
-            obj = new Parse(builder, filename);
-        } catch (java.io.FileNotFoundException e) {
-            System.err.println("Exception loading object!  e=" + e);
-            e.printStackTrace();
-        } catch (java.io.IOException e) {
-            System.err.println("Exception loading object!  e=" + e);
-            e.printStackTrace();
-        }
-        System.err.println("Done parsing WaveFront OBJ file");
-
-        System.err.println("Splitting OBJ file faces into list of faces per material");
-        ArrayList<ArrayList<Face>> facesByTextureList = BuildHelper.createFaceListsByMaterial(builder);
-        System.err.println("Done splitting OBJ file faces into list of faces per material, ended up with " + facesByTextureList.size() + " lists of faces.");
-
-        System.err.println("Loading default texture =" + defaultTextureMaterial);
-        int defaultTextureID = BuildHelper.setUpDefaultTexture(defaultTextureMaterial);
-        System.err.println("Done loading default texture =" + defaultTextureMaterial);
-
-        int currentTextureID = -1;
-        for (ArrayList<Face> faceList : facesByTextureList) {
-            if (faceList.isEmpty()) {
-                System.err.println("ERROR: got an empty face list.  That shouldn't be possible.");
-                continue;
-            }
-            System.err.println("Getting material " + faceList.get(0).material);
-            currentTextureID = BuildHelper.getMaterialID(faceList.get(0).material, defaultTextureID, builder);
-            System.err.println("Splitting any quads and throwing any faces with > 4 vertices.");
-            ArrayList<Face> triangleList = BuildHelper.splitQuads(faceList);
-            System.err.println("Calculating any missing vertex normals.");
-            BuildHelper.calcMissingVertexNormals(triangleList);
-            System.err.println("Ready to build VBO of " + triangleList.size() + " triangles");;
-
-            if (triangleList.size() <= 0) {
-                continue;
-            }
-            System.err.println("Building VBO");
-
-            VBO vbo = VBOFactory.build(currentTextureID, triangleList);
-
-            System.err.println("Adding VBO with text id " + currentTextureID + ", with " + triangleList.size() + " triangles to scene.");
-            scene.addVBO(vbo);
-        }
+    	goblinScene = BuildHelper.setupScene(filename, defaultTextureMaterial);
+    	bunnyScene = BuildHelper.setupScene("res/bunny.obj", defaultTextureMaterial);
     }
 
-    private void gameLoop(String filename, String defaultTextureMaterial) {
+    private void gameLoop() {
         while (!finished) {
             GL11.glLoadIdentity();
             
@@ -156,7 +105,7 @@ public class ObjectLoaderTest {
     	camera.applyTranslations();
         if (Mouse.isGrabbed()) {
 			camera.processMouse();
-			camera.processKeyboard(16, 20.0f);
+			camera.processKeyboard(16, 50.0f);
 		}
     }
     
@@ -166,8 +115,14 @@ public class ObjectLoaderTest {
         
         GL11.glColor3f(0.49f, 0.2f, 0.043f);
         for (int i = 0; i < 10; i++) {
-        	scene.render();
+        	goblinScene.render();
             GL11.glTranslatef(100.0f, 0, 0);
+        }
+//        GL11.glLoadIdentity();
+        GL11.glTranslatef(0, 50f, 0);
+        for (int i = 0; i < 10; i++) {
+        	bunnyScene.render();
+        	GL11.glTranslatef(100.0f, 0, 0);
         }
     }
     
