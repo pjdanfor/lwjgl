@@ -54,7 +54,7 @@ public class BuildHelper {
             System.err.println("Splitting any quads and throwing any faces with > 4 vertices.");
             ArrayList<Face> triangleList = BuildHelper.splitQuads(faceList);
             System.err.println("Calculating any missing vertex normals.");
-            BuildHelper.calcMissingVertexNormals(triangleList);
+            triangleList = BuildHelper.calcMissingVertexNormals(triangleList);
             System.err.println("Ready to build VBO of " + triangleList.size() + " triangles");;
 
             if (triangleList.size() <= 0) {
@@ -172,7 +172,7 @@ public class BuildHelper {
         return triangleList;
 	}
 	
-	public static void calcMissingVertexNormals(ArrayList<Face> triangleList) {
+	public static ArrayList<Face> calcMissingVertexNormals(ArrayList<Face> triangleList) {
         for (Face face : triangleList) {
             face.calculateTriangleNormal();
             for (int loopv = 0; loopv < face.vertices.size(); loopv++) {
@@ -186,6 +186,7 @@ public class BuildHelper {
                 }
             }
         }
+        return triangleList;
     }
 	
 	public static String getTextureFormat(String filename) {

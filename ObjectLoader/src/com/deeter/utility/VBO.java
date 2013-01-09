@@ -60,9 +60,9 @@ public class VBO {
     	glBindBuffer(GL_ARRAY_BUFFER_ARB, getVerticeAttributesID());
     	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesID);
 		shaderProgram.enableAttributes();
-		shaderProgram.setAttributeData(ShaderProgram.VERT_IN_POSITION, VBO.positionElementCount, GL_FLOAT, false, VBO.stride, VBO.positionByteOffset)
-		 			 .setAttributeData(ShaderProgram.VERT_IN_NORMAL, VBO.normalElementCount, GL_FLOAT, false, VBO.stride, VBO.normalByteOffset)
-		 			 .setAttributeData(ShaderProgram.VERT_IN_TEXTURE, VBO.textureElementCount, GL_FLOAT, false, VBO.stride, VBO.textureByteOffset);
+		shaderProgram.setAttributeData(ShaderProgram.VERTEX_POSITION, VBO.positionElementCount, GL_FLOAT, false, VBO.stride, VBO.positionByteOffset)
+		 			 .setAttributeData(ShaderProgram.VERTEX_NORMAL, VBO.normalElementCount, GL_FLOAT, false, VBO.stride, VBO.normalByteOffset)
+		 			 .setAttributeData(ShaderProgram.VERTEX_TEXTURE, VBO.textureElementCount, GL_FLOAT, false, VBO.stride, VBO.textureByteOffset);
     	glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, 0);
     	shaderProgram.disableAttributes();
     	glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);

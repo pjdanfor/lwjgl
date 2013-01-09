@@ -13,9 +13,9 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector4f;
 
 import com.deeter.obj.builder.BuildHelper;
 import com.deeter.shader.ShaderProgram;
@@ -35,8 +35,13 @@ public class ObjectLoader {
 	private int projectionMatrixLocation = 0;
 	private int viewMatrixLocation = 0;
 	private int modelMatrixLocation = 0;
+	private int lightPositionLocation = 0;
 	private Matrix4f modelMatrix;
 	private FloatBuffer matrix44Buffer = null;
+	private Vector4f lightPosition = null;
+	private FloatBuffer lightBuffer = null;
+	private float lightX = 100;
+	private int lightDirection = -1;
 
 	public ObjectLoader() {
 		this.setupOpenGL();
@@ -78,20 +83,21 @@ public class ObjectLoader {
 		timer = new LWJGLTimer();
 		timer.initialize(WINDOW_TITLE);
 		matrix44Buffer = BufferUtils.createFloatBuffer(16);
+		lightBuffer = BufferUtils.createFloatBuffer(4);
 	}
 	
 	private void setupShaders() {
     	// Create Shader Program
-    	shaderProgram = new ShaderProgram("shader/screen.vert", "shader/screen.frag");
+    	shaderProgram = new ShaderProgram("shader/light.vert", "shader/light.frag");
     	// Bind the vertex array object
     	vao = glGenVertexArrays();
 		glBindVertexArray(vao);
     	// Bind the fragment data location for variable 'outColor'
     	shaderProgram.bindFragment(ShaderProgram.FRAG_OUT_COLOR);
 		// Pass information from our VBO and VAO to the shader variables
-    	shaderProgram.bindAttribute(ShaderProgram.VERT_IN_POSITION)
-    				 .bindAttribute(ShaderProgram.VERT_IN_NORMAL)
-    				 .bindAttribute(ShaderProgram.VERT_IN_TEXTURE);
+    	shaderProgram.bindAttribute(ShaderProgram.VERTEX_POSITION)
+    				 .bindAttribute(ShaderProgram.VERTEX_NORMAL)
+    				 .bindAttribute(ShaderProgram.VERTEX_TEXTURE);
     	// Link the program
     	shaderProgram.link();
     	
@@ -99,6 +105,7 @@ public class ObjectLoader {
     	projectionMatrixLocation = shaderProgram.getUniformLocation(ShaderProgram.PROJECTION_MATRIX);
     	viewMatrixLocation = shaderProgram.getUniformLocation(ShaderProgram.VIEW_MATRIX);
     	modelMatrixLocation = shaderProgram.getUniformLocation(ShaderProgram.MODEL_MATRIX);
+    	lightPositionLocation = shaderProgram.getUniformLocation(ShaderProgram.LIGHT_POSITION);
     	
     	// Detach and tear down the shaders once we have set the program up
     	shaderProgram.detachShaders();
@@ -115,15 +122,16 @@ public class ObjectLoader {
 			.build();
 		camera.applyPerspectiveMatrix(projectionMatrixLocation);
 		camera.applyOptimalStates();
+		camera.setPosition(30, 150, 300);
 		Mouse.setGrabbed(true);
 	}
 	
 	private void setupScenes() {
 		scenes = new ArrayList<Scene>();
-		scenes.add(BuildHelper.setupScene("res/bunny.obj", "", 100, 0, 0));
-		scenes.add(BuildHelper.setupScene("res/goblin.obj", "", -50, 0, 0));
-		scenes.add(BuildHelper.setupScene("res/goblin.obj", "", 50, 0, 100));
-		scenes.add(BuildHelper.setupScene("res/goblin.obj", "", 50, 100, -100));
+		scenes.add(BuildHelper.setupScene("res/sweetBunny.obj", "", 100, 0, 0));
+		scenes.add(BuildHelper.setupScene("res/sweetGoblin.obj", "", -50, 0, 0));
+		scenes.add(BuildHelper.setupScene("res/sweetGoblin.obj", "", 50, 0, 100));
+		scenes.add(BuildHelper.setupScene("res/sweetGoblin.obj", "", 50, 100, -100));
 	}
 	
 	private void loopCycle(int delta) {
@@ -140,11 +148,23 @@ public class ObjectLoader {
 		modelMatrix = new Matrix4f();
 		modelMatrix.store(matrix44Buffer); matrix44Buffer.flip();
 		glUniformMatrix4(modelMatrixLocation, false, matrix44Buffer);
+		lightX += 0.2f * delta * lightDirection;
+		if (lightX <= -300) {
+			lightX = -300;
+			lightDirection = 1;
+		}
+		else if (lightX >= 300) {
+			lightX = 300;
+			lightDirection = -1;
+		}
+		lightPosition = new Vector4f(lightX, 50, 50, 1);
+		lightPosition.store(lightBuffer); lightBuffer.flip();
+		glUniform4(lightPositionLocation, lightBuffer);
 	}
 	
 	private void renderCycle() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+//		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 		glBindVertexArray(vao);
 		for (Scene scene : scenes) {
 			scene.render(shaderProgram);

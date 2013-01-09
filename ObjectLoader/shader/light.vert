@@ -1,18 +1,22 @@
-#version 120
+#version 150
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
+uniform vec4 lightPosition;
 
 in vec3 in_Position;
 in vec3 in_Normal;
 in vec2 in_TextureCoord;
 
-varying vec3 frag_Position, frag_Normal;
+out vec3 pd_v;
+out vec3 pd_N;
+out vec4 pd_LightSource;
 
-void main() {
-	vec4 eye_Position = viewMatrix * modelMatrix * vec4(in_Position, 1.0);
-	gl_Position = projectionMatrix * eye_Position;
-	frag_Position = eye_Position.xyz;
-	frag_Normal = (viewMatrix * modelMatrix * vec4(in_Normal, 0.0)).xyz;
+void main(void) {
+	mat3 my_NormalMatrix = mat3(transpose(inverse(viewMatrix * modelMatrix)));
+	pd_v = vec3(viewMatrix * modelMatrix * vec4(in_Position, 1.0));
+	pd_N = normalize(my_NormalMatrix * in_Normal);
+	pd_LightSource = viewMatrix * modelMatrix * lightPosition;
+	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(in_Position, 1.0);
 }

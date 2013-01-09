@@ -18,9 +18,10 @@ import com.deeter.utility.StringUtils;
 
 public class ShaderProgram {
 	
-	public static final CharSequence VERT_IN_POSITION = "in_Position";
-	public static final CharSequence VERT_IN_NORMAL = "in_Normal";
-	public static final CharSequence VERT_IN_TEXTURE = "in_TextureCoord";
+	public static final CharSequence VERTEX_POSITION = "in_Position";
+	public static final CharSequence VERTEX_NORMAL = "in_Normal";
+	public static final CharSequence VERTEX_TEXTURE = "in_TextureCoord";
+	public static final CharSequence LIGHT_POSITION = "lightPosition";
 	public static final CharSequence FRAG_OUT_COLOR = "outColor";
 	public static final CharSequence PROJECTION_MATRIX = "projectionMatrix";
 	public static final CharSequence VIEW_MATRIX = "viewMatrix";
@@ -53,8 +54,8 @@ public class ShaderProgram {
 	
 	private void setupShaders() {
 		try {
-			vertexShader = new Shader(vertexShaderPath, ARBVertexShader.GL_VERTEX_SHADER_ARB);
-            fragmentShader = new Shader(fragmentShaderPath, ARBFragmentShader.GL_FRAGMENT_SHADER_ARB);
+			vertexShader = new Shader(getIdentifier(), vertexShaderPath, GL_VERTEX_SHADER);
+            fragmentShader = new Shader(getIdentifier(), fragmentShaderPath, GL_FRAGMENT_SHADER);
 		}
 		catch(Exception e) {
     		e.printStackTrace();
@@ -184,17 +185,20 @@ public class ShaderProgram {
 	public class Shader {
 		
 		private int identifier;
+		private int programID;
 		
-		public Shader(String shaderPath, int type) {
+		public Shader(int programID, String shaderPath, int type) {
+			this.programID = programID;
 			try {
 				setIdentifier(glCreateShader(type));
 		        
-		        if(isLegit()) {
+		        if (isLegit()) {
 		        	glShaderSource(getIdentifier(), StringUtils.readFileAsString(shaderPath));
 			        glCompileShader(getIdentifier());
-			        
-			        if (glGetProgrami(getIdentifier(), GL_OBJECT_COMPILE_STATUS_ARB) == GL_FALSE)
+			        if (glGetShaderi(getIdentifier(), GL_OBJECT_COMPILE_STATUS_ARB) == GL_FALSE) {
+			        	System.err.println("Error creating shader: " + getLogInfo(getIdentifier()));
 			            throw new RuntimeException("Error creating shader: " + getLogInfo(getIdentifier()));
+			        }
 		        }
 	    	}
 	    	catch(Exception e) {
@@ -210,12 +214,20 @@ public class ShaderProgram {
 			return this.identifier;
 		}
 		
+		public int getProgramIdentifier() {
+			return this.programID;
+		}
+		
 		public void delete() {
 			glDeleteShader(getIdentifier());
 		}
 		
 		public boolean isLegit() {
 			return getIdentifier() != 0;
+		}
+		
+		private String getLogInfo(int identifier) {
+			return glGetShaderInfoLog(identifier, glGetProgrami(identifier, GL_OBJECT_INFO_LOG_LENGTH_ARB));
 		}
 	}
 }

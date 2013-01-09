@@ -51,9 +51,12 @@ public class VBOFactory {
             System.err.println("VBOFactory.build: ERROR Unable to allocate verticeAttributes buffer of size " + (verticeAttributesCount * VBO.elementCount) + " floats.");
         }
         for (FaceVertex vertex : faceVertexList) {
-            verticeAttributes.put(vertex.v.x + vertexOffsetX);
-            verticeAttributes.put(vertex.v.y + vertexOffsetY);
-            verticeAttributes.put(vertex.v.z + vertexOffsetZ);
+        	float xVertex = vertex.v.x + vertexOffsetX;
+        	float yVertex = vertex.v.y + vertexOffsetY;
+        	float zVertex = vertex.v.z + vertexOffsetZ;
+            verticeAttributes.put(xVertex);
+            verticeAttributes.put(yVertex);
+            verticeAttributes.put(zVertex);
             if (vertex.n == null) {
                 verticeAttributes.put(1.0f);
                 verticeAttributes.put(1.0f);
