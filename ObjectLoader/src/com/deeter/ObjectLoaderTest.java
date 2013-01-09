@@ -15,7 +15,6 @@ public class ObjectLoaderTest {
     /** Desired frame time */
     private final int FRAMERATE = 60;
     private boolean finished;
-    private String filename = "res/goblin.obj";
     private String defaultTextureMaterial = "";
     boolean fullscreen = false;
     private PatCamera camera;
@@ -60,8 +59,8 @@ public class ObjectLoaderTest {
 	}
     
     private void setupScene() {
-    	goblinScene = BuildHelper.setupScene(filename, defaultTextureMaterial, 0, 0, 0);
-    	bunnyScene = BuildHelper.setupScene("res/bunny.obj", defaultTextureMaterial, 0, 0, 0);
+    	goblinScene = BuildHelper.setupScene("res/sweetGoblin.obj", defaultTextureMaterial, 0, 0, 0);
+    	bunnyScene = BuildHelper.setupScene("res/sweetBunny.obj", defaultTextureMaterial, 0, 0, 0);
     }
 
     private void gameLoop() {

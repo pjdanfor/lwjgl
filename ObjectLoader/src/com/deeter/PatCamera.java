@@ -318,6 +318,16 @@ public class PatCamera implements Camera {
         }
 	}
 	
+	@Override
+	public void applyOrthographicMatrix() {
+		glPushAttrib(GL_TRANSFORM_BIT);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(-aspectRatio, aspectRatio, -1, 1, 0, zFar);
+        glPopAttrib();
+	}
+	
+	@Override
 	public void applyPerspectiveMatrix() {
 		glPushAttrib(GL_TRANSFORM_BIT);
         glMatrixMode(GL_PROJECTION);

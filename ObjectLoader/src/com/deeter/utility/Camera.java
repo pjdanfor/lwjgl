@@ -20,6 +20,10 @@ public interface Camera {
 	
 	public void applyOptimalStates();
 	
+	public void applyOrthographicMatrix();
+	
+	public void applyPerspectiveMatrix();
+	
 	public void applyPerspectiveMatrix(int uniformLocation);
 	
 	public void applyTranslations(int uniformLocation);
