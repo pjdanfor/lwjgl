@@ -89,7 +89,7 @@ public class ObjectLoader {
 	
 	private void setupShaders() {
     	// Create Shader Program
-    	shaderProgram = new ShaderProgram("shader/test.vert", "shader/test.frag");
+    	shaderProgram = new ShaderProgram("shader/light.vert", "shader/light.frag");
     	// Bind the vertex array object
     	vao = glGenVertexArrays();
 		glBindVertexArray(vao);
