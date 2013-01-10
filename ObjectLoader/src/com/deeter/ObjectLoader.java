@@ -128,9 +128,9 @@ public class ObjectLoader {
 		scenes = new ArrayList<Scene>();
 		scenes.add(BuildHelper.setupScene("res/floor.obj", "", 0, -114, 0));
 		scenes.add(BuildHelper.setupScene("res/bunny.obj", "", 100, -50, 0));
-		scenes.add(BuildHelper.setupScene("res/goblin.obj", "", -50, 0, 0));
-		scenes.add(BuildHelper.setupScene("res/goblin.obj", "", 50, 0, 100));
-		scenes.add(BuildHelper.setupScene("res/goblin.obj", "", 50, 0, -100));
+		scenes.add(BuildHelper.setupScene("res/goblin.obj", "", -100, 0, 0));
+		scenes.add(BuildHelper.setupScene("res/goblin.obj", "", 90, 0, 100));
+		scenes.add(BuildHelper.setupScene("res/goblin.obj", "", 90, 0, -100));
 	}
 	
 	private void loopCycle(int delta) {
@@ -156,7 +156,7 @@ public class ObjectLoader {
 			lightX = 500;
 			lightDirection = -1;
 		}
-		glUniform4f(lightPositionLocation, lightX, 100, 50, 1);
+		glUniform4f(lightPositionLocation, lightX, 200, 50, 1);
 	}
 	
 	private void renderCycle() {
