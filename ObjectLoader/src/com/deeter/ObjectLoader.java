@@ -39,8 +39,6 @@ public class ObjectLoader {
 	private int lightPositionLocation = 0;
 	private Matrix4f modelMatrix;
 	private FloatBuffer matrix44Buffer = null;
-	private Vector4f lightPosition = null;
-	private FloatBuffer lightBuffer = null;
 	private float lightX = 100;
 	private int lightDirection = -1;
 
@@ -84,7 +82,6 @@ public class ObjectLoader {
 		timer = new LWJGLTimer();
 		timer.initialize(WINDOW_TITLE);
 		matrix44Buffer = BufferUtils.createFloatBuffer(16);
-		lightBuffer = BufferUtils.createFloatBuffer(4);
 	}
 	
 	private void setupShaders() {
@@ -159,9 +156,7 @@ public class ObjectLoader {
 			lightX = 500;
 			lightDirection = -1;
 		}
-		lightPosition = new Vector4f(lightX, 100, 50, 1);
-		lightPosition.store(lightBuffer); lightBuffer.flip();
-		glUniform4(lightPositionLocation, lightBuffer);
+		glUniform4f(lightPositionLocation, lightX, 100, 50, 1);
 	}
 	
 	private void renderCycle() {
