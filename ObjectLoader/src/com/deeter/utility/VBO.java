@@ -143,18 +143,18 @@ public class VBO {
     		// Shininess
     		shininess = (float) material.nsExponent;
     		if (shininess <= 0) {
-    			shininess = 50;
+    			shininess = 25;
     		}
     	}
     	else {
     		// Ambient
-    		ambientVector = new Vector4f(0.7f, 0.7f, 0.7f, 1);
+    		ambientVector = new Vector4f(0, 0, 0, 0);
     		// Diffuse
     		diffuseVector = new Vector4f(0.1f, 0.5f, 0.8f, 1);
     		// Specular
     		specularVector = new Vector4f(1, 1, 1, 1);
     		// Shininess
-    		shininess = 80;
+    		shininess = 20;
     	}
     	
     	int ambientLightLocation = shaderProgram.getUniformLocation(ShaderProgram.AMBIENT_LIGHT);
