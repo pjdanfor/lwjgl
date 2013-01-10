@@ -34,17 +34,42 @@ public class VBO {
  	public static final int elementCount = positionElementCount + normalElementCount + textureElementCount;	
  	// The size of a vertex in bytes, like in C/C++: sizeof(Vertex)
  	public static final int stride = positionByteCount + normalByteCount + textureByteCount;
+ 	
+ 	public static final int materialElementBytes = 4;
+ 	
+ 	public static final int ambientElementCount = 4;
+ 	public static final int diffuseElementCount = 4;
+ 	public static final int specularElementCount = 4;
+ 	public static final int shininessElementCount = 1;
+ 	
+ 	public static final int ambientByteCount = ambientElementCount * materialElementBytes;
+ 	public static final int diffuseByteCount = diffuseElementCount * materialElementBytes;
+ 	public static final int specularByteCount = specularElementCount * materialElementBytes;
+ 	public static final int shininessByteCount = shininessElementCount * materialElementBytes;
+ 	
+ 	public static final int ambientByteOffset = 0;
+ 	public static final int diffuseByteOffset = ambientByteOffset + ambientByteCount;
+ 	public static final int specularByteOffset = diffuseByteOffset + diffuseByteCount;
+ 	public static final int shininessByteOffset = specularByteOffset + specularByteCount;
+ 	
+ 	public static final int materialElementCount = ambientElementCount 
+ 			+ diffuseElementCount + specularElementCount + shininessElementCount;
+ 	public static final int materialStride = ambientByteCount
+ 			+ diffuseByteCount + specularByteCount + shininessByteCount;
+ 	
 
     private int textId = 0;
     private int verticeAttributesID = 0;
     private int indicesID = 0;
     private int indicesCount = 0;
+    private int materialID = 0;
 
-    public VBO(int textId, int verticeAttributesID, int indicesID, int indicesCount) {
+    public VBO(int textId, int verticeAttributesID, int indicesID, int materialID, int indicesCount) {
         this.textId = textId;
         this.setVerticeAttributesID(verticeAttributesID);
         this.indicesID = indicesID;
         this.indicesCount = indicesCount;
+        this.materialID = materialID;
     }
 
     public void render(ShaderProgram shaderProgram) {
@@ -63,6 +88,11 @@ public class VBO {
 		shaderProgram.setAttributeData(ShaderProgram.VERTEX_POSITION, VBO.positionElementCount, GL_FLOAT, false, VBO.stride, VBO.positionByteOffset)
 		 			 .setAttributeData(ShaderProgram.VERTEX_NORMAL, VBO.normalElementCount, GL_FLOAT, false, VBO.stride, VBO.normalByteOffset)
 		 			 .setAttributeData(ShaderProgram.VERTEX_TEXTURE, VBO.textureElementCount, GL_FLOAT, false, VBO.stride, VBO.textureByteOffset);
+		glBindBuffer(GL_ARRAY_BUFFER_ARB, this.materialID);
+		shaderProgram.setAttributeData(ShaderProgram.AMBIENT, VBO.ambientElementCount, GL_FLOAT, false, VBO.materialStride, VBO.ambientByteOffset)
+		 			 .setAttributeData(ShaderProgram.DIFFUSE, VBO.diffuseElementCount, GL_FLOAT, false, VBO.materialStride, VBO.diffuseByteOffset)
+		 			 .setAttributeData(ShaderProgram.SPECULAR, VBO.specularElementCount, GL_FLOAT, false, VBO.materialStride, VBO.specularByteOffset)
+		 			 .setAttributeData(ShaderProgram.SHININESS, VBO.shininessElementCount, GL_FLOAT, false, VBO.materialStride, VBO.shininessByteOffset);
     	glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, 0);
     	shaderProgram.disableAttributes();
     	glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);

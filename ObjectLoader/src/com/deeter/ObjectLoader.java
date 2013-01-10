@@ -77,7 +77,7 @@ public class ObjectLoader {
 		
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
-		glClearColor(0.4f, 0.6f, 0.9f, 0f);
+//		glClearColor(0.4f, 0.6f, 0.9f, 0f);
 		glViewport(0, 0, WIDTH, HEIGHT);
 		
 		timer = new LWJGLTimer();
@@ -88,7 +88,7 @@ public class ObjectLoader {
 	
 	private void setupShaders() {
     	// Create Shader Program
-    	shaderProgram = new ShaderProgram("shader/light.vert", "shader/light.frag");
+    	shaderProgram = new ShaderProgram("shader/test.vert", "shader/test.frag");
     	// Bind the vertex array object
     	vao = glGenVertexArrays();
 		glBindVertexArray(vao);
@@ -97,7 +97,11 @@ public class ObjectLoader {
 		// Pass information from our VBO and VAO to the shader variables
     	shaderProgram.bindAttribute(ShaderProgram.VERTEX_POSITION)
     				 .bindAttribute(ShaderProgram.VERTEX_NORMAL)
-    				 .bindAttribute(ShaderProgram.VERTEX_TEXTURE);
+    				 .bindAttribute(ShaderProgram.VERTEX_TEXTURE)
+    				 .bindAttribute(ShaderProgram.AMBIENT)
+    				 .bindAttribute(ShaderProgram.DIFFUSE)
+    				 .bindAttribute(ShaderProgram.SPECULAR)
+    				 .bindAttribute(ShaderProgram.SHININESS);
     	// Link the program
     	shaderProgram.link();
     	
