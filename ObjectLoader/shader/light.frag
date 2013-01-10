@@ -13,7 +13,7 @@ out vec4 outColor;
 
 void main(void) {
 	float my_Shininess = 80;
-	vec4 my_Ambient = vec4(0.7, 0.7, 0.7, 1.0);
+	vec4 my_Ambient = vec4(0.7, 0.7, 0.7, 0.1);
 	vec4 my_Diffuse = vec4(0.1, 0.5, 0.8, 1.0);
 	vec4 my_Specular = vec4(1.0, 1.0, 1.0, 1.0);
 

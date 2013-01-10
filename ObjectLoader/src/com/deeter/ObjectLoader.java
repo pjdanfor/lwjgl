@@ -13,6 +13,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector4f;
@@ -97,11 +98,7 @@ public class ObjectLoader {
 		// Pass information from our VBO and VAO to the shader variables
     	shaderProgram.bindAttribute(ShaderProgram.VERTEX_POSITION)
     				 .bindAttribute(ShaderProgram.VERTEX_NORMAL)
-    				 .bindAttribute(ShaderProgram.VERTEX_TEXTURE)
-    				 .bindAttribute(ShaderProgram.AMBIENT)
-    				 .bindAttribute(ShaderProgram.DIFFUSE)
-    				 .bindAttribute(ShaderProgram.SPECULAR)
-    				 .bindAttribute(ShaderProgram.SHININESS);
+    				 .bindAttribute(ShaderProgram.VERTEX_TEXTURE);
     	// Link the program
     	shaderProgram.link();
     	
@@ -122,7 +119,7 @@ public class ObjectLoader {
 		camera = new PatCamera.Builder()
 			.setAspectRatio((float) WIDTH / (float) HEIGHT)
 			.setFieldOfView(60)
-			.setFarClippingPlane(200)
+			.setFarClippingPlane(500)
 			.build();
 		camera.applyPerspectiveMatrix(projectionMatrixLocation);
 		camera.applyOptimalStates();
@@ -132,10 +129,11 @@ public class ObjectLoader {
 	
 	private void setupScenes() {
 		scenes = new ArrayList<Scene>();
-		scenes.add(BuildHelper.setupScene("res/sweetBunny.obj", "", 100, 0, 0));
-		scenes.add(BuildHelper.setupScene("res/sweetGoblin.obj", "", -50, 0, 0));
-		scenes.add(BuildHelper.setupScene("res/sweetGoblin.obj", "", 50, 0, 100));
-		scenes.add(BuildHelper.setupScene("res/sweetGoblin.obj", "", 50, 100, -100));
+		scenes.add(BuildHelper.setupScene("res/floor.obj", "", 0, -114, 0));
+		scenes.add(BuildHelper.setupScene("res/bunny.obj", "", 100, -50, 0));
+		scenes.add(BuildHelper.setupScene("res/goblin.obj", "", -50, 0, 0));
+		scenes.add(BuildHelper.setupScene("res/goblin.obj", "", 50, 0, 100));
+		scenes.add(BuildHelper.setupScene("res/goblin.obj", "", 50, 0, -100));
 	}
 	
 	private void loopCycle(int delta) {
@@ -147,21 +145,21 @@ public class ObjectLoader {
 		camera.applyTranslations(viewMatrixLocation);
 		if (Mouse.isGrabbed()) {
 			camera.processMouse();
-			camera.processKeyboard((float) delta, 20.0f);
+			camera.processKeyboard((float) delta, 30.0f);
 		}
 		modelMatrix = new Matrix4f();
 		modelMatrix.store(matrix44Buffer); matrix44Buffer.flip();
 		glUniformMatrix4(modelMatrixLocation, false, matrix44Buffer);
 		lightX += 0.2f * delta * lightDirection;
-		if (lightX <= -300) {
-			lightX = -300;
+		if (lightX <= -500) {
+			lightX = -500;
 			lightDirection = 1;
 		}
-		else if (lightX >= 300) {
-			lightX = 300;
+		else if (lightX >= 500) {
+			lightX = 500;
 			lightDirection = -1;
 		}
-		lightPosition = new Vector4f(lightX, 50, 50, 1);
+		lightPosition = new Vector4f(lightX, 100, 50, 1);
 		lightPosition.store(lightBuffer); lightBuffer.flip();
 		glUniform4(lightPositionLocation, lightBuffer);
 	}

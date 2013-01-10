@@ -20,8 +20,6 @@ public class VBOFactory {
         if (triangles.size() <= 0) {
             throw new RuntimeException("Can not build a VBO if we have no triangles with which to build it.");
         }
-        
-        int materialVBO = VBOFactory.handleMaterialInformation(triangles.get(0).material);
 
         // Now sort out the triangle/vertex indices, so we can use a
         // VertexArray in our VBO.  Note the following is NOT the most efficient way
@@ -106,50 +104,6 @@ public class VBOFactory {
         verticeAttributes = null;
         indices = null;
 
-        return new VBO(textureID, vertexAttributesVBO, indicesVBO, materialVBO, indicesCount);
-    }
-    
-    public static int handleMaterialInformation(Material material) {
-    	// Ambient, then diffuse, specular, then shininess lighting information
-    	FloatBuffer materialData = BufferUtils.createFloatBuffer(13);
-    	int materialVBO = glGenBuffers();
-    	if (material != null) {
-    		// Ambient
-    		ReflectivityTransmiss kA = material.ka;
-    		materialData.put((float) kA.rx).put((float) kA.gy).put((float) kA.bz).put(1.0f);
-    		// Diffuse
-    		ReflectivityTransmiss kD = material.kd;
-    		materialData.put((float) kD.rx).put((float) kD.gy).put((float) kD.bz).put(1.0f);
-    		// Specular
-    		ReflectivityTransmiss kS = material.ks;
-    		materialData.put((float) kS.rx).put((float) kS.gy).put((float) kS.bz).put(1.0f);
-    		// Shininess
-    		float shininess = (float) material.nsExponent;
-    		if (shininess <= 0) {
-    			System.out.println("No shininess value for " + material.name);
-    			shininess = 80;
-    		}
-    		materialData.put(shininess);
-    		System.out.println("kA " + (float)material.ka.rx + "," + (float)material.ka.gy + "," + (float)material.ka.bz);
-    		System.out.println("kA " + (float)material.kd.rx + "," + (float)material.kd.gy + "," + (float)material.kd.bz);
-    		System.out.println("kA " + (float)material.ks.rx + "," + (float)material.ks.gy + "," + (float)material.ks.bz);
-    		System.out.println("Shininess: " + material.nsExponent);
-    	}
-    	else {
-    		// Ambient
-    		materialData.put(0.7f).put(0.7f).put(0.7f).put(1.0f);
-    		// Diffuse
-    		materialData.put(0.1f).put(0.5f).put(0.8f).put(1.0f);
-    		// Specular
-    		materialData.put(1.0f).put(1.0f).put(1.0f).put(1.0f);
-    		// Shininess
-    		materialData.put(100f);
-    	}
-    	
-    	materialData.flip();
-    	glBindBuffer(GL_ARRAY_BUFFER, materialVBO);
-    	glBufferData(GL_ARRAY_BUFFER, materialData, GL_STATIC_DRAW);
-    	
-    	return materialVBO;
+        return new VBO(triangles.get(0).material, textureID, vertexAttributesVBO, indicesVBO, indicesCount);
     }
 }

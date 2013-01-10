@@ -1,14 +1,19 @@
 package com.deeter.utility;
 
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.util.vector.Vector4f;
 
+import com.deeter.obj.builder.Material;
+import com.deeter.obj.builder.ReflectivityTransmiss;
 import com.deeter.shader.ShaderProgram;
 
 import static org.lwjgl.opengl.ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.*;
 
 public class VBO {
     
@@ -62,14 +67,14 @@ public class VBO {
     private int verticeAttributesID = 0;
     private int indicesID = 0;
     private int indicesCount = 0;
-    private int materialID = 0;
+    private Material material;
 
-    public VBO(int textId, int verticeAttributesID, int indicesID, int materialID, int indicesCount) {
+    public VBO(Material material, int textId, int verticeAttributesID, int indicesID, int indicesCount) {
         this.textId = textId;
         this.setVerticeAttributesID(verticeAttributesID);
         this.indicesID = indicesID;
         this.indicesCount = indicesCount;
-        this.materialID = materialID;
+        this.material = material;
     }
 
     public void render(ShaderProgram shaderProgram) {
@@ -82,17 +87,13 @@ public class VBO {
     }
     
     private void renderWithShader(ShaderProgram shaderProgram) {
+    	this.sendMaterialUniforms(shaderProgram);
     	glBindBuffer(GL_ARRAY_BUFFER_ARB, getVerticeAttributesID());
     	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesID);
 		shaderProgram.enableAttributes();
 		shaderProgram.setAttributeData(ShaderProgram.VERTEX_POSITION, VBO.positionElementCount, GL_FLOAT, false, VBO.stride, VBO.positionByteOffset)
 		 			 .setAttributeData(ShaderProgram.VERTEX_NORMAL, VBO.normalElementCount, GL_FLOAT, false, VBO.stride, VBO.normalByteOffset)
 		 			 .setAttributeData(ShaderProgram.VERTEX_TEXTURE, VBO.textureElementCount, GL_FLOAT, false, VBO.stride, VBO.textureByteOffset);
-		glBindBuffer(GL_ARRAY_BUFFER_ARB, this.materialID);
-		shaderProgram.setAttributeData(ShaderProgram.AMBIENT, VBO.ambientElementCount, GL_FLOAT, false, VBO.materialStride, VBO.ambientByteOffset)
-		 			 .setAttributeData(ShaderProgram.DIFFUSE, VBO.diffuseElementCount, GL_FLOAT, false, VBO.materialStride, VBO.diffuseByteOffset)
-		 			 .setAttributeData(ShaderProgram.SPECULAR, VBO.specularElementCount, GL_FLOAT, false, VBO.materialStride, VBO.specularByteOffset)
-		 			 .setAttributeData(ShaderProgram.SHININESS, VBO.shininessElementCount, GL_FLOAT, false, VBO.materialStride, VBO.shininessByteOffset);
     	glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, 0);
     	shaderProgram.disableAttributes();
     	glBindBuffer(GL_ARRAY_BUFFER_ARB, 0);
@@ -121,6 +122,49 @@ public class VBO {
         glDisableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         glDisable(GL_TEXTURE_2D);
+    }
+    
+    private void sendMaterialUniforms(ShaderProgram shaderProgram) {
+    	float shininess;
+    	Vector4f ambientVector;
+    	Vector4f diffuseVector;
+    	Vector4f specularVector;
+    	
+    	if (material != null) {
+    		// Ambient
+    		ReflectivityTransmiss kA = material.ka;
+    		ambientVector = new Vector4f((float) kA.rx, (float) kA.gy, (float) kA.bz, 1);
+    		// Diffuse
+    		ReflectivityTransmiss kD = material.kd;
+    		diffuseVector = new Vector4f((float) kD.rx, (float) kD.gy, (float) kD.bz, 1);
+    		// Specular
+    		ReflectivityTransmiss kS = material.ks;
+    		specularVector = new Vector4f((float) kS.rx, (float) kS.gy, (float) kS.bz, 1);
+    		// Shininess
+    		shininess = (float) material.nsExponent;
+    		if (shininess <= 0) {
+    			shininess = 50;
+    		}
+    	}
+    	else {
+    		// Ambient
+    		ambientVector = new Vector4f(0.7f, 0.7f, 0.7f, 1);
+    		// Diffuse
+    		diffuseVector = new Vector4f(0.1f, 0.5f, 0.8f, 1);
+    		// Specular
+    		specularVector = new Vector4f(1, 1, 1, 1);
+    		// Shininess
+    		shininess = 80;
+    	}
+    	
+    	int ambientLightLocation = shaderProgram.getUniformLocation(ShaderProgram.AMBIENT_LIGHT);
+    	glUniform4f(ambientLightLocation, ambientVector.getX(), ambientVector.getY(), ambientVector.getZ(), ambientVector.getW());
+    	int diffuseLightLocation = shaderProgram.getUniformLocation(ShaderProgram.DIFFUSE_LIGHT);
+    	glUniform4f(diffuseLightLocation, diffuseVector.getX(), diffuseVector.getY(), diffuseVector.getZ(), diffuseVector.getW());
+    	int specularLightLocation = shaderProgram.getUniformLocation(ShaderProgram.SPECULAR_LIGHT);
+    	glUniform4f(specularLightLocation, specularVector.getX(), specularVector.getY(), specularVector.getZ(), specularVector.getW());
+    	int shininessLocation = shaderProgram.getUniformLocation(ShaderProgram.SHININESS);
+    	glUniform1f(shininessLocation, shininess);
     }
 
     public void destroy() {

@@ -11,9 +11,6 @@ import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lwjgl.opengl.ARBFragmentShader;
-import org.lwjgl.opengl.ARBVertexShader;
-
 import com.deeter.utility.StringUtils;
 
 public class ShaderProgram {
@@ -21,10 +18,10 @@ public class ShaderProgram {
 	public static final CharSequence VERTEX_POSITION = "in_Position";
 	public static final CharSequence VERTEX_NORMAL = "in_Normal";
 	public static final CharSequence VERTEX_TEXTURE = "in_TextureCoord";
-	public static final CharSequence AMBIENT = "in_Ambient";
-	public static final CharSequence DIFFUSE = "in_Diffuse";
-	public static final CharSequence SPECULAR = "in_Specular";
-	public static final CharSequence SHININESS = "in_Shininess";
+	public static final CharSequence AMBIENT_LIGHT = "ambientLight";
+	public static final CharSequence DIFFUSE_LIGHT = "diffuseLight";
+	public static final CharSequence SPECULAR_LIGHT = "specularLight";
+	public static final CharSequence SHININESS = "shininess";
 	public static final CharSequence LIGHT_POSITION = "lightPosition";
 	public static final CharSequence FRAG_OUT_COLOR = "outColor";
 	public static final CharSequence PROJECTION_MATRIX = "projectionMatrix";
