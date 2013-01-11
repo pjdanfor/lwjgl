@@ -152,9 +152,6 @@ public class ObjectLoader {
 			camera.processMouse();
 			camera.processKeyboard((float) delta, 30.0f);
 		}
-		modelMatrix = new Matrix4f();
-		modelMatrix.store(matrix44Buffer); matrix44Buffer.flip();
-		glUniformMatrix4(modelMatrixLocation, false, matrix44Buffer);
 		lightX += 0.2f * delta * lightDirection;
 		if (lightX <= -590) {
 			lightX = -590;
@@ -165,6 +162,9 @@ public class ObjectLoader {
 			lightDirection = -1;
 		}
 		glUniform4f(lightPositionLocation, lightX, 200, -50, 1);
+		for (Scene scene : scenes) {
+			scene.update(shaderProgram, delta);
+		}
 	}
 	
 	private void renderCycle() {

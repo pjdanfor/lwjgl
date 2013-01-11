@@ -4,6 +4,8 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import com.deeter.obj.builder.Material;
@@ -68,6 +70,8 @@ public class VBO {
     private int indicesID = 0;
     private int indicesCount = 0;
     private Material material;
+    private FloatBuffer matrix44Buffer;
+    private float angle;
 
     public VBO(Material material, int textId, int verticeAttributesID, int indicesID, int indicesCount) {
         this.textId = textId;
@@ -75,6 +79,17 @@ public class VBO {
         this.indicesID = indicesID;
         this.indicesCount = indicesCount;
         this.material = material;
+        this.matrix44Buffer = BufferUtils.createFloatBuffer(16);
+        this.angle = 0;
+    }
+    
+    public void update(ShaderProgram shaderProgram, int delta) {
+    	Matrix4f modelMatrix = new Matrix4f();
+    	if (textId == 0) {
+    		angle = (angle + ((0.01f * delta)/40)) % 360;
+    		Matrix4f.rotate(angle, new Vector3f(0, 1, 0), modelMatrix, modelMatrix);
+    	}
+		modelMatrix.store(matrix44Buffer); matrix44Buffer.flip();
     }
 
     public void render(ShaderProgram shaderProgram) {
@@ -89,6 +104,7 @@ public class VBO {
     private void renderWithShader(ShaderProgram shaderProgram) {
     	glBindTexture(GL_TEXTURE_2D, textId);
     	this.sendMaterialUniforms(shaderProgram);
+    	glUniformMatrix4(shaderProgram.getUniformLocation(ShaderProgram.MODEL_MATRIX), false, matrix44Buffer);
     	glBindBuffer(GL_ARRAY_BUFFER_ARB, getVerticeAttributesID());
     	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesID);
 		shaderProgram.enableAttributes();

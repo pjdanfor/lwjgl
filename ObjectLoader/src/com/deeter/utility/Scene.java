@@ -15,6 +15,12 @@ public class Scene {
     public void addVBO(VBO r) {
         vboList.add(r);
     }
+    
+    public void update(ShaderProgram shaderProgram, int delta) {
+    	for (int i = 0; i < vboList.size(); i++) {
+    		vboList.get(i).update(shaderProgram, delta);
+    	}
+    }
 
     public void render(ShaderProgram shaderProgram) {
         for (int i = 0; i < vboList.size(); i++) {
