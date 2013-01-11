@@ -76,7 +76,7 @@ public class BuildHelper {
     // In general in this simple test code we are only using textures, not 'colors' or (so far) any of the other multitude of things that
     // can be specified via 'materials'. 
     public static int setUpDefaultTexture(String defaultTextureMaterial) {
-        int defaultTextureID = -1;
+        int defaultTextureID = 0;
         if (defaultTextureMaterial != null && !defaultTextureMaterial.equals("")) {
         	try {
         		String format = BuildHelper.getTextureFormat(defaultTextureMaterial);

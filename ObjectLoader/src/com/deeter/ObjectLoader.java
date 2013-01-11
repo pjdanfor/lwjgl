@@ -126,7 +126,15 @@ public class ObjectLoader {
 	
 	private void setupScenes() {
 		scenes = new ArrayList<Scene>();
-		scenes.add(BuildHelper.setupScene("res/floor.obj", "", 0, -114, 0));
+		scenes.add(BuildHelper.setupScene("res/floor.obj", "res/lava.png", 0, -114, 0));
+		scenes.add(BuildHelper.setupScene("res/floor.obj", "res/lava.png", 300, -114, 0));
+		scenes.add(BuildHelper.setupScene("res/floor.obj", "res/lava.png", -300, -114, 0));
+		scenes.add(BuildHelper.setupScene("res/floor.obj", "res/lava.png", 0, -114, 300));
+		scenes.add(BuildHelper.setupScene("res/floor.obj", "res/lava.png", 300, -114, 300));
+		scenes.add(BuildHelper.setupScene("res/floor.obj", "res/lava.png", -300, -114, 300));
+		scenes.add(BuildHelper.setupScene("res/floor.obj", "res/lava.png", 0, -114, -300));
+		scenes.add(BuildHelper.setupScene("res/floor.obj", "res/lava.png", 300, -114, -300));
+		scenes.add(BuildHelper.setupScene("res/floor.obj", "res/lava.png", -300, -114, -300));
 		scenes.add(BuildHelper.setupScene("res/bunny.obj", "", 100, -50, 0));
 		scenes.add(BuildHelper.setupScene("res/goblin.obj", "", -100, 0, 0));
 		scenes.add(BuildHelper.setupScene("res/goblin.obj", "", 90, 0, 100));
@@ -148,15 +156,15 @@ public class ObjectLoader {
 		modelMatrix.store(matrix44Buffer); matrix44Buffer.flip();
 		glUniformMatrix4(modelMatrixLocation, false, matrix44Buffer);
 		lightX += 0.2f * delta * lightDirection;
-		if (lightX <= -500) {
-			lightX = -500;
+		if (lightX <= -590) {
+			lightX = -590;
 			lightDirection = 1;
 		}
-		else if (lightX >= 500) {
-			lightX = 500;
+		else if (lightX >= 590) {
+			lightX = 590;
 			lightDirection = -1;
 		}
-		glUniform4f(lightPositionLocation, lightX, 200, 50, 1);
+		glUniform4f(lightPositionLocation, lightX, 200, -50, 1);
 	}
 	
 	private void renderCycle() {

@@ -4,8 +4,6 @@ import static org.lwjgl.opengl.GL15.*;
 
 import com.deeter.obj.builder.FaceVertex;
 import com.deeter.obj.builder.Face;
-import com.deeter.obj.builder.Material;
-import com.deeter.obj.builder.ReflectivityTransmiss;
 
 import java.util.*;
 
@@ -71,8 +69,8 @@ public class VBOFactory {
                 verticeAttributes.put(vertex.n.z);
             } 
             if (vertex.t == null) {
-                    verticeAttributes.put((float)Math.random());
-                    verticeAttributes.put((float)Math.random());
+                    verticeAttributes.put(1.0f);
+                    verticeAttributes.put(1.0f);
                 numMissingUV++;
             } else {
                 verticeAttributes.put(vertex.t.u);

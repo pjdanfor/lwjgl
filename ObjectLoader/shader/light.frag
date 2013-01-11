@@ -11,10 +11,6 @@ in vec3 pd_v;
 in vec3 pd_N;
 in vec2 pd_TextureCoord;
 in vec4 pd_LightSource;
-in vec4 pd_Ambient;
-in vec4 pd_Diffuse;
-in vec4 pd_Specular;
-in float pd_Shininess;
 
 out vec4 outColor;
 
@@ -32,8 +28,8 @@ void main(void) {
 
 	// calculate Specular Term:
 	vec4 Ispec = specularLight * pow(max(dot(R, E), 0.0), 0.3 * shininess);
-	Ispec = clamp(Ispec, 0.0, 1.0); 
-
-	// write Total Color:  
-	outColor = vec4(0.5, 0.5, 0.1, 1.0) + Iamb + Idiff + Ispec;
+	Ispec = clamp(Ispec, 0.0, 1.0);
+	
+	// write Total Color:
+	outColor = texture(tex, pd_TextureCoord) + Iamb + Idiff + Ispec;
 }

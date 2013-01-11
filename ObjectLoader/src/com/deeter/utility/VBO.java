@@ -87,6 +87,7 @@ public class VBO {
     }
     
     private void renderWithShader(ShaderProgram shaderProgram) {
+    	glBindTexture(GL_TEXTURE_2D, textId);
     	this.sendMaterialUniforms(shaderProgram);
     	glBindBuffer(GL_ARRAY_BUFFER_ARB, getVerticeAttributesID());
     	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesID);
